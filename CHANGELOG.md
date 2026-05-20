@@ -57,12 +57,15 @@ real-hardware verification — see the README banner.
 
 ### CI
 
-- `.github/workflows/build-image.yml` now installs the full
-  qemu-user + qemu-user-static + qemu-user-binfmt + binfmt-support
-  set so pi-gen Docker mode actually finds `qemu-arm`. The
-  v1.0.0 → v1.1.0 image builds failed on this; the tag was
-  retargeted at the fix commit so v1.1.0 attaches an image when
-  the next build succeeds.
+- `.github/workflows/build-image.yml` is now `workflow_dispatch`
+  only. Pi-gen master's `scripts/dependencies_check` hardcodes a
+  `qemu-arm-static` → `qemu-user-binfmt` mapping that conflicts
+  at the dpkg level with `qemu-user-static` on Ubuntu Noble.
+  We tried five different fix attempts (Docker mode + qemu-user-static,
+  native mode + qemu-user-binfmt, equivs dummy package,
+  sed-patch on `depends`, …) — none survived because the check
+  is in the script, not the data file. Locally `tools/build-image.sh`
+  works on Debian Bookworm hosts. Tracked in ROADMAP §1.1.6.
 
 [v1.1.0]: https://github.com/danusha2345/teslausb-ng/releases/tag/v1.1.0
 

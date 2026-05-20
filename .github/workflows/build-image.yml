@@ -1,9 +1,12 @@
 name: Build Image
 
+# NOTE: pi-gen master's dependency check (scripts/dependencies_check) maps
+# qemu-arm-static → the qemu-user-binfmt package, which conflicts with
+# qemu-user-static on Ubuntu Noble at the dpkg level. Until upstream pi-gen
+# either accepts qemu-user-static or the runner ships a friendlier OS, this
+# workflow is opt-in via manual dispatch — tag pushes won't auto-fail it.
+# Track the upstream side at https://github.com/RPi-Distro/pi-gen/issues
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
       pi_gen_ref:

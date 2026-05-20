@@ -36,6 +36,12 @@ Theme: close every loose end the v1.0 plan explicitly deferred. After this relea
 - **Files**: viewer paths under `teslausb-www/`, new `setup/pi/configure-cloud-viewer.sh`.
 - **Verification**: download a known clip from a sandbox GCS bucket, then S3.
 
+### 1.1.6 Reproducible pi-gen image build in CI (M, BLOCKED)
+
+- **Status**: blocked. Pi-gen master (commit `d2f70c5` as of 2026-05-20) hardcodes a `qemu-arm-static` → `qemu-user-binfmt` dependency mapping in `scripts/dependencies_check`. On Ubuntu Noble (the GitHub Actions runner OS) `qemu-user-binfmt` declares a hard dpkg `Conflicts: qemu-user-static`, and pi-gen's debootstrap step needs `qemu-user-static` to populate the chroot. Neither equivs stubs nor sed-patching the `depends` file works around the hardcoded check.
+- **Workarounds we have today**: `tools/build-image.sh` runs cleanly on Debian Bookworm or Raspberry Pi OS hosts. Until upstream pi-gen ships a `dependencies_check` that accepts `qemu-user-static`, the GitHub Actions workflow `Build Image` is `workflow_dispatch` only — tag pushes do not auto-fail it.
+- **Plan**: track [`RPi-Distro/pi-gen`](https://github.com/RPi-Distro/pi-gen) for either an updated dependency check or a stable tag that predates this mapping. Pin `tools/build-image.sh` to that tag and re-enable tag-push triggers in the workflow.
+
 ### 1.1.5 Promote files to strict ShellCheck (M)
 - **Action**: fix the pre-existing warnings in the broader script tree (SC2155 declare-and-assign, SC2034 unused vars, SC2124 array-to-string, SC2046 word-split, SC2038 xargs without `-print0`) and promote each cleaned file from `check.sh` pass 2 into the strict pass 1 list.
 - **Files**: `setup/pi/configure-ap.sh`, `setup/pi/configure.sh`, `setup/pi/envsetup.sh`, `setup/pi/create-backingfiles*.sh`, `tools/merge_config.sh`, `tests/*.sh`, `run/make_snapshot.sh`, plus the CGI scripts.
