@@ -1,5 +1,8 @@
 #!/bin/bash -eu
 
+# shellcheck disable=SC1091
+. /root/bin/_retry.sh 2> /dev/null || true
+
 if [[ ( -z "${TESLAFI_API_TOKEN:+x}" ) && ( -z "${TESSIE_API_TOKEN:+x}" ) && ( -z "${TESLA_BLE_VIN:+x}" ) && ( -z "${KEEP_AWAKE_WEBHOOK_URL:+x}" ) ]]
 then
   log "Not configured to keep car awake."
@@ -174,8 +177,20 @@ else
       elif [[ -n "${TESLA_BLE_VIN:+x}" ]]
       # Use Tesla BLE API to enable Sentry Mode
       then
-        if /root/bin/tesla-control -ble -key-file /root/.ble/key_private.pem -vin "${TESLA_BLE_VIN^^}" sentry-mode on
+        # 3 attempts with exponential backoff (10s base + jitter, capped at
+        # 300s — but 3 attempts top out around ~30-40s in practice). Sleeping
+        # cars often wake on the 2nd or 3rd retry; without retries we'd log a
+        # single failure on every archive cycle and never recover until the
+        # next one.
+        if command -v retry_with_backoff > /dev/null \
+          && retry_with_backoff 3 10 -- \
+            /root/bin/tesla-control -ble -key-file /root/.ble/key_private.pem -vin "${TESLA_BLE_VIN^^}" sentry-mode on
         then
+          log "Tesla BLE: Command sent to enable Sentry Mode."
+        elif /root/bin/tesla-control -ble -key-file /root/.ble/key_private.pem -vin "${TESLA_BLE_VIN^^}" sentry-mode on
+        then
+          # Fallback path for installs where _retry.sh isn't installed yet
+          # (e.g. mid-upgrade). Keeps awake_start backwards-compatible.
           log "Tesla BLE: Command sent to enable Sentry Mode."
         else
           # See doc/Tesla_BLE.md — this is often transient (car asleep, BLE range, pairing).

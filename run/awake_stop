@@ -1,5 +1,8 @@
 #!/bin/bash -eu
 
+# shellcheck disable=SC1091
+. /root/bin/_retry.sh 2> /dev/null || true
+
 if [[ ( -z "${TESLAFI_API_TOKEN:+x}" ) && ( -z "${TESSIE_API_TOKEN:+x}" ) && ( -z "${TESLA_BLE_VIN:+x}" ) && ( -z "${KEEP_AWAKE_WEBHOOK_URL:+x}" ) ]]
 then
   exit
@@ -89,7 +92,13 @@ case "${SENTRY_CASE}" in
     then
       # Use Tesla BLE API to disable Sentry Mode.
       # See doc/Tesla_BLE.md — this is often transient (car asleep, BLE range, pairing).
-      if /root/bin/tesla-control -ble -key-file /root/.ble/key_private.pem -vin "${TESLA_BLE_VIN^^}" sentry-mode off
+      # 3 attempts with exponential backoff for transient BLE conditions.
+      if command -v retry_with_backoff > /dev/null \
+        && retry_with_backoff 3 10 -- \
+          /root/bin/tesla-control -ble -key-file /root/.ble/key_private.pem -vin "${TESLA_BLE_VIN^^}" sentry-mode off
+      then
+        log "Tesla BLE: Command sent to disable Sentry Mode."
+      elif /root/bin/tesla-control -ble -key-file /root/.ble/key_private.pem -vin "${TESLA_BLE_VIN^^}" sentry-mode off
       then
         log "Tesla BLE: Command sent to disable Sentry Mode."
       else

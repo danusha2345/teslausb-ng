@@ -807,6 +807,22 @@ video {
 </style>
 </head>
 <body>
+<!--
+  Quick-actions panel: hidden by default; quickactions.js reveals it when
+  /cgi-bin/ble_action.sh?action=status reports ble_enabled=true. Buttons
+  call the same CGI with action=lock|honk|sentry-on|sentry-off|wake.
+  Sits above the tab UI so it's reachable on every tab.
+-->
+<div id="quick-actions-panel" hidden style="background:#222;color:#eee;padding:6px 10px;display:flex;gap:6px;align-items:center;font:13px/1.4 sans-serif;border-bottom:1px solid #333;">
+  <span style="opacity:.7;margin-right:4px">Quick BLE:</span>
+  <button data-ble-action="lock"        type="button">Lock</button>
+  <button data-ble-action="unlock"      type="button">Unlock</button>
+  <button data-ble-action="honk"        type="button">Honk</button>
+  <button data-ble-action="sentry-on"   type="button">Sentry ON</button>
+  <button data-ble-action="sentry-off"  type="button">Sentry OFF</button>
+  <button data-ble-action="wake"        type="button">Wake</button>
+</div>
+
 <div class="tabholder">
   <div class="hamburger" onclick="toggleHamburgerMenu();"></div>
   <div class="currenttabname" onclick="toggleHamburgerMenu();"></div>
@@ -3105,5 +3121,6 @@ mediaQuery.addListener(setCurrentTabName);
 
 
 </script>
+<script type="module" src="js/quickactions.js"></script>
 </body>
 </html>
