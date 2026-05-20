@@ -75,42 +75,25 @@ function check_default_rsync {
   return 1
 }
 
-function install_prebuilt_rsync {
-  # Split declare and assign so `local` doesn't mask uname -m exit status.
-  local arch
-  arch="$(uname -m)"
-  if [ "$arch" = "aarch64" ]
-  then
-    curl -L --fail -o /usr/local/bin/rsync https://github.com/marcone/rsync/releases/download/v3.2.3-arm64/rsync
-  elif [[ $arch =~ arm* ]]
-  then
-    curl -L --fail -o /usr/local/bin/rsync https://github.com/marcone/rsync/releases/download/v3.2.3-rpi/rsync
-  else
-    log_progress "No prebuilt rsync for '$arch'"
-    return 1
-  fi
-}
-
 function check_rsync {
+  # teslausb-ng drops the marcone/rsync prebuilt fallback. That binary was
+  # plain rsync 3.2.3 built on a Raspberry Pi Zero / Radxa Zero in 2021–22
+  # to back-fill Buster/Bullseye, which shipped older 3.1.x. Bookworm
+  # (the only OS teslausb-ng supports — see setup-teslausb's Stretch/Buster
+  # rejection) ships rsync 3.2.7, which supersedes 3.2.3 and removes the
+  # original reason for vendoring a binary. The audit on marcone/rsync's
+  # release notes confirms zero custom patches — both releases are
+  # straightforward builds of the WayneD/rsync 3.2.3 tag.
   if check_default_rsync
   then
-    log_progress "rsync seems to work OK"
+    log_progress "rsync seems to work OK ($(rsync --version 2> /dev/null | head -n 1))"
     return 0
   fi
 
-  log_progress "default rsync doesn't work, installing prebuilt 3.2.3"
-  if install_prebuilt_rsync
-  then
-    chmod a+x /usr/local/bin/rsync
-    apt install -y libxxhash0 libssl-dev
-    if check_default_rsync
-    then
-      log_progress "rsync works OK now"
-      return 0
-    fi
-  fi
-
-  log_progress "STOP: rsync doesn't work correctly"
+  log_progress "STOP: rsync doesn't work correctly. Stock Bookworm rsync"
+  log_progress "is expected to handle teslausb's --files-from + symlinks"
+  log_progress "workflow. If you hit this, please file a bug with the"
+  log_progress "output of: rsync --version  +  the failing rsync command."
   log_progress "(using '$(which rsync)')"
   exit 1
 }
