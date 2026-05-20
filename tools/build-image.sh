@@ -82,6 +82,18 @@ echo ">>> Preparing pi-gen with teslausb sources"
     echo "Patched $local_run to skip rpi-resize.service enable."
   fi
 
+  # Skip pi-gen sub-stages that pull in RPi-only packages we don't need.
+  # cloud-init: needs rpi-cloud-init-mods (RPi repo only); teslausb-ng
+  # bootstraps via /etc/rc.local instead, no cloud-init involved.
+  # Each entry below adds an empty SKIP file which makes pi-gen treat the
+  # sub-stage as a no-op.
+  for skip_dir in stage2/04-cloud-init; do
+    if [[ -d "$skip_dir" ]]; then
+      touch "$skip_dir/SKIP"
+      echo "Marked $skip_dir as SKIP (RPi-only deps, not needed by teslausb-ng)."
+    fi
+  done
+
   "$REPO_ROOT/pi-gen-sources/prepare.sh"
 )
 
