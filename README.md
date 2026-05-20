@@ -1,4 +1,10 @@
-# teslausb
+# teslausb-ng
+
+[![Boosty](https://img.shields.io/badge/Boosty-Buy_me_a_coffee-FF7143?logo=boosty&logoColor=white&style=for-the-badge)](https://boosty.to/danusha/donate)
+
+> **Community-maintained continuation of [marcone/teslausb](https://github.com/marcone/teslausb)** — the upstream repository has been inactive since January 2023. This fork aims to revive the project by fixing long-standing issues (BLE pairing, OneDrive sync, archive errors, audio skipping on Model Y) and modernizing the web UI. All original authors and the MIT license are preserved — see [LICENSE](LICENSE).
+
+If `teslausb-ng` saves you time or makes your Tesla life better, consider supporting development via [Boosty](https://boosty.to/danusha/donate). Boosty accepts cards from anywhere in the world.
 
 ## Intro
 
@@ -50,3 +56,9 @@ For pull requests, please split complex changes into multiple pull requests when
 This repo contains steps and scripts originally from [this thread on Reddit](https://www.reddit.com/r/teslamotors/comments/9m9gyk/build_a_smart_usb_drive_for_your_tesla_dash_cam/)
 
 Many people in that thread suggested that the scripts be hosted on GitHub but the author didn't seem interested in making that happen, so GitHub user "cimryan" hosted the scripts on GitHub with the Reddit user's permission.
+
+---
+
+[![Boosty](https://img.shields.io/badge/Boosty-Buy_me_a_coffee-FF7143?logo=boosty&logoColor=white&style=for-the-badge)](https://boosty.to/danusha/donate)
+
+Support `teslausb-ng` development via [Boosty](https://boosty.to/danusha/donate) — international cards accepted.
