@@ -9,4 +9,7 @@ fcgiwrap
 libnginx-mod-http-fancyindex
 libfuse-dev
 exfatprogs
-sntp
+chrony
+bluez
+bluez-firmware
+libbluetooth3

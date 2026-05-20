@@ -716,7 +716,7 @@ function set_time () {
   local -r clocktime_start=$(date +%s.%N)
   for _ in {1..5}
   do
-    if sntp -S time.google.com || ntpdig -S time.google.com || sntp -S 129.6.15.28 || ntpdig -S 129.6.15.28 #(time-a-g.nist.gov)
+    if chronyd -q 'pool time.google.com iburst' || ntpdig -S time.google.com || chronyd -q 'server 129.6.15.28 iburst' || ntpdig -S 129.6.15.28 #(time-a-g.nist.gov)
     then
       local -r uptime_end=$(awk '{print $1}' /proc/uptime)
       local -r clocktime_end=$(date +%s.%N)

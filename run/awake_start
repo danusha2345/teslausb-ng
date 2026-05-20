@@ -178,7 +178,8 @@ else
         then
           log "Tesla BLE: Command sent to enable Sentry Mode."
         else
-          log "Tesla BLE: Failed to set Sentry Mode."
+          # See doc/Tesla_BLE.md — this is often transient (car asleep, BLE range, pairing).
+          log "Tesla BLE: Could not enable Sentry Mode (car may be asleep, BLE out of range, or pairing invalid). This is often transient."
         fi
       elif [[ -n "${KEEP_AWAKE_WEBHOOK_URL:+x}" ]]
       # Use webhook to send start command
