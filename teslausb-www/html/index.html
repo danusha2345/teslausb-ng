@@ -13,6 +13,11 @@
 <link rel="stylesheet" href="contextmenu.css">
 <script src="contextmenu.js"></script>
 <script src="filebrowser.js"></script>
+<!-- v1.1.2: utilities pulled out of the inline script in index.html. utils.js
+     must load before cgi.js (cgi.js depends on log/cachebustingurl). Both are
+     classic scripts so existing inline code can call them without imports. -->
+<script src="js/utils.js"></script>
+<script src="js/cgi.js"></script>
 <meta name="msapplication-TileColor" content="#00aba9">
 <meta name="msapplication-config" content="/icons/browserconfig.xml">
 <meta name="theme-color" content="#ffffff">
@@ -1073,21 +1078,10 @@ video {
 
 <script>
 
-function localStorageGet(name) {
-  try {
-    return localStorage.getItem(name);
-  } catch (error) {
-    log(error);
-  }
-}
-
-function localStorageSet(name, value) {
-  try {
-    localStorage.setItem(name, value);
-  } catch (error) {
-    log(error);
-  }
-}
+// v1.1.2: localStorageGet / localStorageSet / log / download /
+// cachebustingurl / isElementVisible moved to js/utils.js; readyState /
+// starttailing / readfile / callcgi moved to js/cgi.js. Both are loaded
+// in the <head> via classic <script> tags above this inline block.
 
 if (document.referrer.includes("/new/")) {
   /* user switched back from the Vue UI */
@@ -1104,12 +1098,8 @@ var isWebkit = navigator.userAgent.toLowerCase().indexOf('applewebkit') > -1;
 
 var DEBUG = false;
 var WORK_AROUND_WEBKIT_QUIRKS = true;
-
-function log(what) {
-  if (DEBUG) {
-    console.log(what);
-  }
-}
+// log() lives in js/utils.js; it reads window.DEBUG so the var above
+// continues to control its verbosity.
 
 function hideRecordingParent() {
   var i = document.querySelector(".recordings");
@@ -1250,146 +1240,9 @@ function skipForward() {
   currentsequence.seekTo(parseInt(slider.value) + 30000);
 }
 
-function download(filename, text) {
-  var elem = document.createElement('a');
-  elem.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-  elem.setAttribute('download', filename);
-  elem.style.display = 'none';
-  document.body.appendChild(elem);
-  elem.click();
-  document.body.removeChild(elem);
-}
-
-function cachebustingurl(url) {
-  return url + '?' + Math.random();
-}
-
-function isElementVisible(elem) {
-  return !(window.getComputedStyle(elem).visibility === "hidden");
-}
-
-function starttailing({url, pre, button}) {
-  if (!isElementVisible(pre)) {
-    setTimeout(function() {
-                            starttailing({url:url, pre:pre, button:button});
-                          }, 1000);
-    return;
-  }
-  log("tail " + url);
-  if (pre.tailcorrection === undefined) {
-    pre.tailcorrection=0;
-  }
-  var tailpos=pre.textContent.length - 1 + pre.tailcorrection;
-  var request = new XMLHttpRequest();
-  request.open('GET', cachebustingurl(url));
-  request.setRequestHeader('Range', 'bytes=' + tailpos + '-' + (tailpos + 32768));
-  request.onreadystatechange = function () {
-    if (request.readyState === 4) {
-      if (request.status === 206) {
-        var left = pre.scrollLeft;
-        var scrollpos=pre.scrollTop+pre.clientHeight;
-        var scrollheight=pre.scrollHeight;
-        var shouldgotobottom=(Math.abs(scrollpos-scrollheight) < 5)
-        pre.appendChild(document.createTextNode(request.responseText.substring(1)));
-        if (shouldgotobottom) {
-          pre.scrollTo(left,pre.scrollHeight);
-        }
-        setTimeout(function() {
-                                starttailing({url:url, pre:pre, button:button});
-                              }, 500);
-      } else if (request.status === 416) {
-        /* log was truncated, find the end of the currently
-           displayed log in the new remote log to determine
-           the offset at which we should now read. */
-        log('reloading truncated log: ' + tailpos);
-        var newreq = new XMLHttpRequest();
-        newreq.open('GET', cachebustingurl(url));
-        newreq.onreadystatechange = function () {
-          if (newreq.readyState === 4) {
-            if (newreq.status === 200) {
-              var len=pre.textContent.length;
-              var lastshown=pre.textContent.substring(len-200,len);
-              var newpos=newreq.responseText.indexOf(lastshown);
-              if (newpos > 0) {
-                pre.tailcorrection=-(len-(newpos+200));
-                starttailing({url:url, pre:pre, button:button});
-                return;
-              }
-            }
-            log('could not read file "' + url + '", status: ' + request.status);
-            pre.textContent="Attempting refresh..."
-            pre.tailcorrection=0;
-            readfile({url:url, pre:pre.id, button:button, tail:true});
-          }
-        }
-        newreq.send();
-      } else {
-        log('unexpected status: ' + request.status);
-      }
-    }
-  }
-  request.send();
-}
-
-function readyState(state) {
-  if (state == 0) {
-    return "UNSENT";
-  } else if (state == 1) {
-    return "OPENED";
-  } else if (state == 2) {
-    return "HEADERS_RECEIVED";
-  } else if (state == 3) {
-    return "LOADING";
-  } else if (state == 4) {
-    return "DONE";
-  } else {
-    return "UNKNOWN";
-  }
-}
-
-function readfile({url, callback, callbackarg, pre, tail, button}) {
-  var request = new XMLHttpRequest();
-  request.open('GET', cachebustingurl(url));
-  log("reading " + url);
-  request.onreadystatechange = function () {
-    log(`read ${url}, result: ${request.status}, state: ${readyState(request.readyState)}`);
-    if (request.readyState === 4 && request.status === 200) {
-      var type = request.getResponseHeader('Content-Type');
-      if (type.indexOf("text") !== 1) {
-        if (callback != null) {
-          callback(request.responseText, callbackarg);
-        }
-        if (pre != null) {
-          var preobj = document.getElementById(pre);
-          preobj.textContent=request.responseText;
-          if (tail === true) {
-            preobj.scrollTo(0,preobj.scrollHeight);
-            starttailing({url:url, pre:preobj, button:button});
-          }
-        }
-        if (button != null) {
-          var btn = document.getElementById(button);
-          btn.disabled=false;
-        }
-      }
-    }
-  }
-  request.send();
-}
-
-function callcgi(url) {
-  var request = new XMLHttpRequest();
-  request.open('GET', cachebustingurl(url));
-  request.onreadystatechange = function () {
-    if (request.readyState === 4 && request.status === 200) {
-      var type = request.getResponseHeader('Content-Type');
-      if (type.indexOf("text") !== 1) {
-        return request.responseText;
-      }
-    }
-  }
-  request.send();
-}
+// download / cachebustingurl / isElementVisible / starttailing /
+// readyState / readfile / callcgi moved to js/utils.js + js/cgi.js
+// (loaded ahead of this inline block).
 
 function syncfunc() {
   callcgi('cgi-bin/trigger_sync.sh');
