@@ -1,0 +1,44 @@
+name: Lint & Format
+
+on: [push, pull_request]
+
+jobs:
+  shfmt:
+    name: shfmt (bash formatting)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shfmt
+        run: |
+          curl -fsSL -o /usr/local/bin/shfmt \
+            https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64
+          chmod +x /usr/local/bin/shfmt
+          shfmt --version
+      - name: Check shell formatting
+        # -i 2 = 2-space indent, -ci = switch case indent, -sr = redirect space.
+        # We only report issues; we don't enforce auto-format yet.
+        run: |
+          shfmt -d -i 2 -ci -sr \
+            run/archiveloop \
+            run/awake_start \
+            run/awake_stop \
+            run/rsync_archive/archive-clips.sh \
+            run/cifs_archive/archive-clips.sh \
+            run/rclone_archive/archive-clips.sh \
+            run/nfs_archive/archive-clips.sh \
+            || echo "::warning::shfmt formatting differences detected — see diff above."
+
+  prettier:
+    name: prettier (web UI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run prettier check
+        # Non-blocking: we record drift but do not gate the build yet.
+        run: |
+          npx --yes prettier@3 --check \
+            "teslausb-www/html/**/*.{js,css,html}" \
+            || echo "::warning::prettier formatting differences detected."
