@@ -6,6 +6,48 @@
 
 If `teslausb-ng` saves you time or makes your Tesla life better, consider supporting development via [Boosty](https://boosty.to/danusha/donate). Boosty accepts cards from anywhere in the world.
 
+## What's new in teslausb-ng vs upstream
+
+| Area | upstream `marcone/teslausb` | this fork (`teslausb-ng`) |
+|---|---|---|
+| Last activity | January 2023 | active |
+| BLE pairing on the prebuilt image | broken — missing `bluez`/`bluez-firmware` ([#958](https://github.com/marcone/teslausb/issues/958)) | works out of the box |
+| Time sync | deprecated `sntp` ([#733](https://github.com/marcone/teslausb/issues/733)) | `chrony` |
+| Sentry-mode BLE log noise | alarming "Failed to set Sentry Mode" ([#1029](https://github.com/marcone/teslausb/issues/1029)) | informative wording + [doc/Tesla_BLE.md](doc/Tesla_BLE.md) |
+| rsync "broken pipe" recovery | bailout on exit 12/23/30 ([#942](https://github.com/marcone/teslausb/issues/942)) | exit 12/23/24/30 all retried |
+| OneDrive sync via rclone | broken auth ([#948](https://github.com/marcone/teslausb/issues/948)) | bumped rclone install path + docs |
+| Web UI `eval()` of CGI input | XSS / RCE risk | replaced with explicit parser |
+| Web UI HTML injection | unescaped filenames in `innerHTML` | new `htmlEscape` helper, full sweep |
+| CGI path-traversal | `cd $DOCUMENT_ROOT/${urlargs[0]}` unsafe | shared `_validate_path.sh` + 11 unit tests |
+| Python deps | ad-hoc `pip install` | pinned `setup/pi/requirements.txt` |
+| `tesla-control` binary | tracks "latest" | optional pin via `TESLA_BLE_BINARY_TAG` |
+| systemd unit | bare `Restart=always` | `RestartSec=5s`, burst limits, journald routing — see [doc/Systemd.md](doc/Systemd.md) |
+| Sync progress | silent | opt-in via `SEND_PROGRESS_NOTIFICATIONS=true` ([#759](https://github.com/marcone/teslausb/issues/759)) |
+| Verbose archive output | none | opt-in `ARCHIVE_VERBOSE=true` ([#667](https://github.com/marcone/teslausb/issues/667)) |
+| SavedClips minute filter | not available | cherry-picked PR [#1033](https://github.com/marcone/teslausb/pull/1033) |
+| Upload throughput monitor | not available | cherry-picked PR [#1044](https://github.com/marcone/teslausb/pull/1044) |
+| HTTP compression + preload toggle | not available | cherry-picked PR [#1046](https://github.com/marcone/teslausb/pull/1046) |
+| Credentials at rest | plain text on SD card | optional `systemd-creds` encryption — see [doc/Credentials.md](doc/Credentials.md) |
+| Reproducible image builds | manual | `tools/build-image.sh` + GitHub Actions matrix |
+| CI coverage | ShellCheck on 12 files | ShellCheck (broader), shfmt, prettier, Playwright smoke, path-traversal tests |
+
+See [the v1.0.0 release notes](https://github.com/danusha2345/teslausb-ng/releases/tag/v1.0.0) for the full changelog.
+
+## Migrating from upstream `teslausb`
+
+If you already run upstream `marcone/teslausb` and want to try this fork on
+the same Pi:
+
+```bash
+# On the Pi, with the upstream install running:
+curl -fsSL https://raw.githubusercontent.com/danusha2345/teslausb-ng/main-dev/tools/migrate-from-upstream.sh | sudo bash
+```
+
+The script snapshots `/mutable`, swaps `setup-teslausb` and `archiveloop`
+in `/root/bin/` for the teslausb-ng versions, reloads the systemd unit,
+and prints a rollback command in case something goes wrong. Your conf
+file (`/root/teslausb_setup_variables.conf`) is left in place.
+
 ## Intro
 
 Raspberry Pi and other [SBCs](## "Single Board Computers") can emulate a USB drive, so can act as a drive for your Tesla to write dashcam footage to. Because the SBC has full access to the emulated drive, it can:
