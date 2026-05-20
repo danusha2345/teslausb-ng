@@ -369,6 +369,7 @@ function install_archive_scripts () {
   copy_script run/archiveloop "$install_path"
   copy_script run/_retry.sh "$install_path"
   copy_script run/_progress_notifier.sh "$install_path"
+  copy_script run/_log.sh "$install_path"
   copy_script run/waitforidle "$install_path"
   copy_script run/remountfs_rw "$install_path"
   copy_script run/awake_start "$install_path"
@@ -851,6 +852,10 @@ install_archive_scripts /root/bin "$archive_module"
 
 systemctl disable teslausb.service || true
 
+# Hardened teslausb.service: keep Restart=always (archive loop should run
+# whenever the system is up) but add a burst limit and explicit journald
+# routing so crashes don't fast-loop indefinitely and so all logs land in
+# `journalctl -u teslausb` for diagnosis. See doc/Systemd.md.
 cat << EOF > /lib/systemd/system/teslausb.service
 [Unit]
 Description=TeslaUSB archiveloop service
@@ -861,6 +866,14 @@ After=mutable.mount backingfiles.mount
 Type=simple
 ExecStart=/bin/bash /root/bin/archiveloop
 Restart=always
+RestartSec=5s
+StartLimitIntervalSec=600
+StartLimitBurst=20
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=teslausb
+TimeoutStopSec=30s
+MemoryAccounting=true
 
 [Install]
 WantedBy=backingfiles.mount
