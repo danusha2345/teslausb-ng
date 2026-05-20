@@ -35,8 +35,12 @@ jobs:
         # full set and re-enable binfmts so binfmt_misc entries are live.
         run: |
           sudo apt-get update
+          # qemu-user-binfmt conflicts with qemu-user-static on Ubuntu Noble —
+          # pick the non-static set: qemu-user gives us /usr/bin/qemu-arm
+          # (what pi-gen's check uses), qemu-user-binfmt registers the
+          # binfmt_misc handlers automatically on install.
           sudo apt-get install -y --no-install-recommends \
-            qemu-user qemu-user-static qemu-user-binfmt binfmt-support
+            qemu-user qemu-user-binfmt binfmt-support
           sudo update-binfmts --enable || true
           # Re-register through tonistiigi/binfmt for good measure — this is
           # what docker/setup-qemu-action does but we want it after the apt
