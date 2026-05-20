@@ -11,7 +11,10 @@ then
 fi
 
 function getvarname () {
-  local line="$@"
+  # $* (not $@) is the right tool when joining all positional args into a
+  # single string with IFS[0] as separator. SC2124 fires on $@ in this
+  # context because it discards array semantics.
+  local line="$*"
   local var=""
   if [[ "$line" =~ ^[[:space:]]*#?[[:space:]]*export[[:space:]]+([A-Za-z_][A-Za-z0-9_]*)= ]]
   then

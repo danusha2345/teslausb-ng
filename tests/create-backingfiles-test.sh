@@ -61,7 +61,8 @@ rm "$BACKINGFILES_FOLDER/test.bin"
           for exfat in true false
           do
             checksuccess "$cam" "$music" "$lightshow" "$boombox" "$BACKINGFILES_FOLDER" "$exfat" < /dev/null
-	    find "$BACKINGFILES_FOLDER" -type f | xargs rm
+	    # -print0/xargs -0 so spaces / non-ASCII in test filenames don't break the cleanup.
+	    find "$BACKINGFILES_FOLDER" -type f -print0 | xargs -0 -r rm
           done
         done
       done

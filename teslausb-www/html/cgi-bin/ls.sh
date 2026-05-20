@@ -15,7 +15,9 @@ validate_cgi_base
 validate_cgi_operands
 cd "$_CGI_BASE" || exit
 
-lspath="${urlargs[@]:1}"
+# ${*:1} (not ${@:1}) joins remaining args into a single string via IFS[0];
+# the rest of this script treats lspath as a single path argument to find.
+lspath="${urlargs[*]:1}"
 if [[ -z "$lspath" ]]
 then
   lspath=.

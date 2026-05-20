@@ -177,7 +177,9 @@ function snapshot {
   then
     local -r tmpmnt=$(mktemp -d)
     /root/bin/mountimage "$newsnapname" "$tmpmnt" rw
-    find "$tmpmnt" -newerat 20380101 | xargs -r touch
+    # -print0/xargs -0: clip filenames may contain spaces / non-ASCII; without
+    # NUL-separation, xargs would split on whitespace and `touch` non-existent paths.
+    find "$tmpmnt" -newerat 20380101 -print0 | xargs -0 -r touch
     umount "$tmpmnt"
     rmdir "$tmpmnt"
   fi

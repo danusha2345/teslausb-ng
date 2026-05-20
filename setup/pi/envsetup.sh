@@ -212,8 +212,11 @@ fi
 # (https://lore.kernel.org/lkml/8bed44f2-273c-856e-0018-69f127ea4258@linux.ibm.com/)
 # but even when it fails like that, testing shows the loop device gets created anyway
 function losetup_find_show {
-  local lastarg="${@:$#}"
-  local loop=$(losetup -n -O NAME -j "$lastarg")
+  # ${!#} is the canonical "last positional parameter" in bash —
+  # equivalent to ${@:$#} but doesn't trigger SC2124 (array→string).
+  local lastarg="${!#}"
+  local loop
+  loop=$(losetup -n -O NAME -j "$lastarg")
   if losetup -f --show "$@"
   then
     return
@@ -226,7 +229,8 @@ function losetup_find_show {
     # an error.
     return 1
   fi
-  local newloop=$(losetup -n -O NAME -j "$lastarg")
+  local newloop
+  newloop=$(losetup -n -O NAME -j "$lastarg")
   if [ -z "$newloop" ]
   then
     # losetup truly failed and didn't even create a loop device

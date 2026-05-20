@@ -82,7 +82,9 @@ else
   echo "DATA_DRIVE not set. Proceeding to SD card setup"
 fi
 
-readonly LAST_PARTITION_DEVICE=$(sfdisk -q -l "$BOOT_DISK" | tail -1 | awk '{print $1}')
+# Split declare and assign so sfdisk's exit status isn't masked by `readonly`.
+LAST_PARTITION_DEVICE=$(sfdisk -q -l "$BOOT_DISK" | tail -1 | awk '{print $1}')
+readonly LAST_PARTITION_DEVICE
 readonly LAST_PART_NUM=${LAST_PARTITION_DEVICE:0-1}
 readonly SECOND_TO_LAST_PART_NUM=$((LAST_PART_NUM - 1))
 readonly SECOND_TO_LAST_PARTITION_DEVICE=${LAST_PARTITION_DEVICE:0:-1}${SECOND_TO_LAST_PART_NUM}

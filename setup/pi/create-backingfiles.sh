@@ -185,7 +185,8 @@ function image_matches_params () {
   then
     if [ -e "$image_file" ]
     then
-      local current_image_size=$(image_size_kb "$image_file")
+      local current_image_size
+      current_image_size=$(image_size_kb "$image_file")
       if ! closeenough "$requested_image_size" "$current_image_size"
       then
         log_progress "$image_file should be resized (to $requested_image_size from $current_image_size)"

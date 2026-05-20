@@ -24,7 +24,8 @@ then
 fi
 
 function nm_get_wifi_client_device () {
-  for i in {1..5}
+  # Loop counter unused — use _ to silence SC2034.
+  for _ in {1..5}
   do
     WLAN="$(nmcli -t -f TYPE,DEVICE c show --active | grep 802-11-wireless | grep -v ":ap0$" | cut -c 17-)"
     if [ -n "$WLAN" ]
