@@ -121,7 +121,54 @@ Optional:
 
 ## Installing
 
-To install teslausb on a Raspberry Pi, it is recommended to use the [prebuilt image](https://github.com/marcone/teslausb/releases) and [one step setup instructions](doc/OneStepSetup.md). For other SBCs, start [here](https://github.com/marcone/teslausb/wiki/Installation)
+### Quick start (prebuilt image)
+
+CI auto-attaches a fresh `image_*-teslausb.zip` to every tag push.
+Grab it from the [latest release](https://github.com/danusha2345/teslausb-ng/releases/latest):
+
+1. Download `image_YYYY-MM-DD-teslausb.zip` from
+   [Releases](https://github.com/danusha2345/teslausb-ng/releases/latest).
+   The v1.1.0 file is ~624 MB; the unzipped `.img` is ~2.5 GB.
+2. Flash to a 64 GB+ micro-SD with [Raspberry Pi Imager](https://www.raspberrypi.com/software/):
+   click "Operating System" → scroll to the bottom → "Use custom" → select the
+   unzipped `teslausb.img`. Pick your SD card under "Storage". Write.
+3. Re-mount the card on your computer. Inside the `boot` (or `boot/firmware`
+   on Pi 5) partition you'll find `teslausb_setup_variables.conf`. Edit it
+   with your Wi-Fi SSID, password, archive backend, and BLE VIN (if any).
+   The file is heavily commented; the [sample on GitHub](https://github.com/danusha2345/teslausb-ng/blob/main-dev/pi-gen-sources/00-teslausb-tweaks/files/teslausb_setup_variables.conf.sample)
+   is the same file with all options documented.
+4. Eject, insert the SD into the Pi, plug the Pi into your Tesla USB port.
+5. First boot runs the headless setup (5–15 minutes). When the green LED
+   settles into a slow blink, the Pi is ready and presenting as a USB drive
+   to the Tesla.
+6. If something looks off, ssh in: `ssh pi@teslausb.local` (password
+   `raspberry`; change it). Logs:
+   `journalctl -u teslausb -f`, `/mutable/archiveloop.log`,
+   `/teslausb/teslausb-headless-setup.log`.
+
+See [doc/OneStepSetup.md](doc/OneStepSetup.md) for the full version with
+every option, and [doc/Tesla_BLE.md](doc/Tesla_BLE.md) for BLE pairing
+(needed if you set `TESLA_BLE_VIN`).
+
+### Migrating from upstream `marcone/teslausb`
+
+If you already run upstream on a Pi, swap the runtime scripts without
+re-flashing:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/danusha2345/teslausb-ng/main-dev/tools/migrate-from-upstream.sh | sudo bash
+```
+
+It snapshots `/mutable` and `/root/bin` to a timestamped backup, swaps
+in the teslausb-ng scripts, restarts the service, and prints the rollback
+command in case anything looks worse.
+
+### Other SBCs (no prebuilt image)
+
+For Pi 4 with external drives, Rock Pi 4, Radxa Zero, etc., the prebuilt
+image won't fit your hardware. Start with
+[doc/Pi4ExternalDriveSetup.md](doc/Pi4ExternalDriveSetup.md) or the
+[upstream wiki](https://github.com/marcone/teslausb/wiki/Installation).
 
 ## Contributing
 

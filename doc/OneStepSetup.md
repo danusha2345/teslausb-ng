@@ -1,6 +1,8 @@
 # One-step setup
 
-This is a streamlined process for setting up the Pi. You'll flash a preconfigured version of Raspbian Buster Lite and then fill out a config file.
+This is a streamlined process for setting up the Pi. You'll flash a
+preconfigured Raspberry Pi OS Bookworm image (built from teslausb-ng's
+pi-gen recipe) and fill out a single config file.
 
 ## Notes
 
@@ -10,12 +12,12 @@ This is a streamlined process for setting up the Pi. You'll flash a preconfigure
 
 ## Configure the SD card before first boot of the Pi
 
-1.  Flash the [latest image release](https://github.com/marcone/teslausb/releases/latest) using [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or a similar flashing tool.
+1.  Flash the [latest teslausb-ng image release](https://github.com/danusha2345/teslausb-ng/releases/latest) using [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or a similar flashing tool.
 
     In Raspberry Pi Imager, you need to click 'Operating System' and then scroll _all the way down_ and select the 'Use custom' option.
 
-1.  Mount the card again, and in the `boot` directory create a `teslausb_setup_variables.conf` file to export the same environment variables normally needed for manual setup (including archive info, Wifi, and push notifications (if desired).
-    A sample conf file is located in the `boot` folder on the SD card. The latest sample is also available [from GitHub](https://github.com/marcone/teslausb/blob/main-dev/pi-gen-sources/00-teslausb-tweaks/files/teslausb_setup_variables.conf.sample).
+1.  Mount the card again, and in the `boot` directory (or `boot/firmware` on Pi 5) create or edit the `teslausb_setup_variables.conf` file to export the same environment variables normally needed for manual setup (including archive info, Wifi, and push notifications (if desired).
+    A sample conf file is located in the `boot` folder on the SD card. The latest sample is also available [from GitHub](https://github.com/danusha2345/teslausb-ng/blob/main-dev/pi-gen-sources/00-teslausb-tweaks/files/teslausb_setup_variables.conf.sample).
     The sample file contains documentation and suggestions for values.
 
     > **Note** When creating/editing the configuration file on Windows, ensure that it is saved with the correct extension. It is recommended to disable the "hide extensions for known file types" option in Windows so you can see the full file name.
