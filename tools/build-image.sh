@@ -42,6 +42,18 @@ echo ">>> Preparing pi-gen with teslausb sources"
   git fetch origin
   git checkout "$PI_GEN_REF" 2> /dev/null || git checkout master
   git reset --hard "origin/$PI_GEN_REF" 2> /dev/null || git reset --hard origin/master
+
+  # Pi-gen's depends file requires the literal package name
+  # qemu-user-binfmt, which on Ubuntu Noble declares a hard
+  # Conflicts: qemu-user-static. We need qemu-user-static (its
+  # qemu-arm-static binary is copied into the chroot by debootstrap),
+  # so neutralize the line. The actual binfmt registrations come
+  # from qemu-user-static via update-binfmts.
+  if [[ -f depends ]]; then
+    sed -i.bak '/^qemu-user-binfmt$/d' depends
+    echo "Removed qemu-user-binfmt from pi-gen depends (using qemu-user-static instead)."
+  fi
+
   "$REPO_ROOT/pi-gen-sources/prepare.sh"
 )
 
