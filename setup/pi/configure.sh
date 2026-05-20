@@ -368,6 +368,7 @@ function install_archive_scripts () {
   copy_script setup/pi/requirements.txt "$install_path"
   copy_script run/archiveloop "$install_path"
   copy_script run/_retry.sh "$install_path"
+  copy_script run/_progress_notifier.sh "$install_path"
   copy_script run/waitforidle "$install_path"
   copy_script run/remountfs_rw "$install_path"
   copy_script run/awake_start "$install_path"
