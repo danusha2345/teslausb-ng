@@ -1885,7 +1885,16 @@ function showstatus() {
         } else {
           wifiinfo += statusvals.wifi_ip;
         }
-        var strength = eval(statusvals.wifi_strength);
+        // status.sh emits wifi_strength as "N/M" (e.g. "70/100") from
+        // iwconfig's Link Quality. Parse it explicitly — never eval() a
+        // value sourced from a system command (XSS / RCE risk in the
+        // browser context even when the producer is local).
+        var strength_parts = String(statusvals.wifi_strength || "").split("/");
+        var strength = (strength_parts.length === 2
+          && Number.isFinite(parseFloat(strength_parts[0]))
+          && parseFloat(strength_parts[1]) > 0)
+          ? parseFloat(strength_parts[0]) / parseFloat(strength_parts[1])
+          : 0;
         var str = "+".repeat(1 + 3.99 * strength);
         var wifiicon = document.querySelector(".wifi-icon");
         wifiicon.attributes.strength.value = str;

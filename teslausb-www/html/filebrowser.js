@@ -85,7 +85,7 @@ class FileBrowser {
     if (this.drives.length > 1) {
       var rootlabeldropdown = '<select name="drive" class="fb-driveselector">';
       for (var i = 0; i < this.drives.length; i++) {
-        rootlabeldropdown += `<option value="${i}">${this.drives[i].label}</option>`
+        rootlabeldropdown += `<option value="${i}">${this.htmlEscape(this.drives[i].label)}</option>`
       }
       rootlabeldropdown += '</select><span class="fb-diskinfo-outer"><div class="fb-diskinfo-inner"><span class="fb-diskinfo"></span></div></span>'
       rootlabel.innerHTML = rootlabeldropdown;
@@ -99,7 +99,7 @@ class FileBrowser {
         this.updateButtonBar();
       };
     } else {
-      rootlabel.innerHTML = `<span class="fb-treerootpathsinglelabel">${this.drives[0].label}</span><span class="fb-diskinfo-outer"><div class="fb-diskinfo-inner"><span class="fb-diskinfo"></span></div></span>`;
+      rootlabel.innerHTML = `<span class="fb-treerootpathsinglelabel">${this.htmlEscape(this.drives[0].label)}</span><span class="fb-diskinfo-outer"><div class="fb-diskinfo-inner"><span class="fb-diskinfo"></span></div></span>`;
     }
 
     this.buttonbar = this.anchor_elem.querySelector(".fb-buttonbar");
@@ -613,7 +613,11 @@ class FileBrowser {
       div.style.background = "#0008";
       div.onclick = (e) => { if (e.target === div) div.remove(); };
       document.firstElementChild.append(div);
-      div.innerHTML = `<div class="fb-player"><div class="fb-playertitle">${displaypath}</div><audio autoplay controls src="${encodeURIComponent(this.root_path + "/" + path)}"></div>`;
+      // displaypath is shown to the user as the audio title. It comes from the
+      // filesystem listing so a filename containing markup would otherwise be
+      // interpreted as HTML. encodeURIComponent on the src is correct for the
+      // URL context, but the title needs HTML-context escaping.
+      div.innerHTML = `<div class="fb-player"><div class="fb-playertitle">${this.htmlEscape(displaypath)}</div><audio autoplay controls src="${encodeURIComponent(this.root_path + "/" + path)}"></div>`;
       div.querySelector(".fb-playertitle").scrollLeft=1000;
     }
   }
@@ -638,6 +642,19 @@ class FileBrowser {
     return encstr; // new TextDecoder().decode(this.base64ToBytes(encstr));
   }
 
+  // Escape user-controlled strings (file names, paths, drive labels) before
+  // injecting them into innerHTML/template literals. Tesla writes file names
+  // we don't control (e.g. SavedClips event titles) so any innerHTML path
+  // that includes a label or filename MUST run it through htmlEscape first.
+  htmlEscape(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   addCommonDragHooks(item) {
     item.ondragover = this.allowDrop;
     item.ondragenter = this.dragEnter;
@@ -647,8 +664,12 @@ class FileBrowser {
 
   createTreeItem(label, fullPath) {
     var li = document.createElement("li");
+    // label is a directory name from the filesystem (Tesla-generated names like
+    // "SavedClips/2024-01-01_12-34-56", or user-renamed). Escape it before
+    // splicing into innerHTML. fullPath goes into an attribute value, so it
+    // needs attribute-context escaping (handled by htmlEscape).
     li.innerHTML = '<details>' +
-       '<summary class="fb-treedirentry" data-fullpath="' + this.stringEncode(fullPath) + '" draggable=true>' + label + '</summary>' +
+       '<summary class="fb-treedirentry" data-fullpath="' + this.htmlEscape(this.stringEncode(fullPath)) + '" draggable=true>' + this.htmlEscape(label) + '</summary>' +
        '<ul></ul></details>';
     const s = li.querySelector("summary");
     s.onclick = (e) => { this.dirClicked(e, this.stringDecode(e.target.dataset.fullpath)); };

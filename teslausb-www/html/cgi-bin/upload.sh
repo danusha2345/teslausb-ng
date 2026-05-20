@@ -10,7 +10,10 @@ do
   urlargs[i]="$(echo -e "${val//%/\\x}")"
 done
 
-cd "$DOCUMENT_ROOT/${urlargs[0]}"
+. "$(dirname "$0")/_validate_path.sh"
+validate_cgi_base
+validate_cgi_operands
+cd "$_CGI_BASE"
 
 destpath="${urlargs[1]}"
 echo $destpath >> /tmp/upload.txt

@@ -10,10 +10,10 @@ do
   urlargs[i]="$(echo -e "${val//%/\\x}")"
 done
 
-if ! cd "$DOCUMENT_ROOT/${urlargs[0]}"
-then
-  exit
-fi
+. "$(dirname "$0")/_validate_path.sh"
+validate_cgi_base
+validate_cgi_operands
+cd "$_CGI_BASE" || exit
 
 lspath="${urlargs[@]:1}"
 if [[ -z "$lspath" ]]

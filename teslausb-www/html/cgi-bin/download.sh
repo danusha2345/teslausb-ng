@@ -10,8 +10,10 @@ do
   urlargs[i]="$(echo -e "${val//%/\\x}")"
 done
 
-dir="$DOCUMENT_ROOT/${urlargs[0]}"
-file="$DOCUMENT_ROOT/${urlargs[0]}/${urlargs[1]}"
+. "$(dirname "$0")/_validate_path.sh"
+validate_cgi_base
+dir="$_CGI_BASE"
+file=$(resolve_under_root "$_CGI_BASE" "${urlargs[1]:-}")
 if [[ "$len" == 2 && -d "$dir" && -f "$file" ]]
 then
   str=$(file --mime-type "$file")
