@@ -27,13 +27,21 @@ jobs:
         with:
           platforms: arm64,arm
 
-      - name: Install qemu-user-static on the runner
-        # pi-gen's build-docker.sh exec's qemu-arm directly inside the build
-        # container; docker/setup-qemu-action only registers binfmt handlers,
-        # the actual binary still has to be present.
+      - name: Install qemu-user + binfmt support on the runner
+        # pi-gen's build-docker.sh checks for `qemu-arm` (dynamic, from
+        # qemu-user) — NOT `qemu-arm-static` — and bails with
+        # "qemu-arm not found (please install qemu-user-binfmt)" if either
+        # the binary or the binfmt registration is missing. Install the
+        # full set and re-enable binfmts so binfmt_misc entries are live.
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends qemu-user-static binfmt-support
+          sudo apt-get install -y --no-install-recommends \
+            qemu-user qemu-user-static qemu-user-binfmt binfmt-support
+          sudo update-binfmts --enable || true
+          # Re-register through tonistiigi/binfmt for good measure — this is
+          # what docker/setup-qemu-action does but we want it after the apt
+          # install above so the host /usr/bin/qemu-arm is in PATH.
+          docker run --privileged --rm tonistiigi/binfmt --install all || true
 
       - name: Build image
         env:
