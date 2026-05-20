@@ -27,6 +27,14 @@ jobs:
         with:
           platforms: arm64,arm
 
+      - name: Install qemu-user-static on the runner
+        # pi-gen's build-docker.sh exec's qemu-arm directly inside the build
+        # container; docker/setup-qemu-action only registers binfmt handlers,
+        # the actual binary still has to be present.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-user-static binfmt-support
+
       - name: Build image
         env:
           PI_GEN_CLEAN: "1"
