@@ -1,8 +1,13 @@
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
-  - name: "⛔ Questions"
-    url: https://discord.gg/b4MHf2x
-    about: 'Please do not use GitHub for asking questions. If you simply have a question, then the Discord is the best place to ask it. You may also find answers to your questions in the FAQ (in the "Wiki" tab).'
-  - name: "⛔ Check if your problem has been reported already"
-    url: https://github.com/marcone/teslausb/issues
-    about: "Please check if the problem you're encountering has already been reported. Check both opened and closed issues, as well as the Wiki."
+  - name: 📖 ROADMAP — what's planned, in what order
+    url: https://github.com/danusha2345/teslausb-ng/blob/main-dev/ROADMAP.md
+    about: Before opening a feature request, check the roadmap. Most planned things are already listed there with a milestone.
+
+  - name: 📝 Migration help (from marcone/teslausb)
+    url: https://github.com/danusha2345/teslausb-ng/blob/main-dev/tools/migrate-from-upstream.sh
+    about: One-shot migration script. Read it before running it. Snapshots /mutable + /root/bin so you can roll back if needed.
+
+  - name: 🧪 Want to be a recurring tester?
+    url: https://github.com/danusha2345/teslausb-ng/issues/new?template=works_for_me.yml
+    about: "The maintainer doesn't have a Tesla — every \"works for me\" report from real hardware is what we use to decide if a tag is stable enough to recommend."

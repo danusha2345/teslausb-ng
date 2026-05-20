@@ -1,0 +1,55 @@
+name: "Works for me"
+description: "Confirm a teslausb-ng release works on your real hardware. One report from a real user is worth a hundred CI runs."
+title: "[works] "
+labels: ["confirmed-working"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to confirm. The maintainer doesn't have a Tesla,
+        so every "works for me" report is what we use to decide if a tag is stable
+        enough to recommend.
+
+  - type: input
+    id: version
+    attributes:
+      label: teslausb-ng version
+      placeholder: "e.g. v1.0.0 / commit 015a502"
+    validations:
+      required: true
+
+  - type: input
+    id: hardware
+    attributes:
+      label: "Pi model + Tesla model + firmware"
+      placeholder: "e.g. Pi 4 / Model Y 2024 / 2024.20.4"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: archive_backend
+    attributes:
+      label: Archive backend
+      options:
+        - rsync
+        - rclone
+        - cifs
+        - nfs
+        - none
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: How long has it been running? Anything notable?
+      placeholder: "e.g. 'Running since v1.0.0 release, 14 days, archived ~80 Sentry events without intervention.'"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: recurring_tester
+    attributes:
+      label: Want to be a recurring tester?
+      options:
+        - label: Ping me before tagging a release so I can smoke-test on real hardware.

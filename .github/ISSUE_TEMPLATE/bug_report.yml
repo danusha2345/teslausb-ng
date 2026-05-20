@@ -1,90 +1,124 @@
-name: "Bug report"
-description: Create a new report
+name: Bug report
+description: Report something that breaks on real Pi + Tesla hardware.
+title: "[bug] "
+labels: ["bug", "needs-triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        **Is this the right place for my bug report?**
-        If you simply have a question, please check the [FAQ](/marcone/teslausb/wiki/FAQ) first, and/or check the [troubleshooting steps](/marcone/teslausb/wiki/Troubleshooting). If those do not answer your question use [Discord](https://discord.gg/b4MHf2x).
-        If you you are reporting a problem with teslausb itself, this is the right place.
-        If the problem is a more general Linux or Raspberry Pi OS problem, then [the Raspberry Pi forums](https://www.raspberrypi.org/forums) may offer some help
+        **The maintainer of this fork does not own a Tesla or a Raspberry Pi to test on.**
+        Every change ships behind CI (ShellCheck, Playwright smoke, path-traversal unit
+        tests), but only your hardware report tells us whether the change actually works
+        in the car. Please fill out every field below — incomplete reports usually sit
+        untriaged because we cannot guess at the missing data.
 
-  - type: textarea
-    id: description
+        Before filing: skim the [v1.x release notes](https://github.com/danusha2345/teslausb-ng/releases)
+        and the [ROADMAP](https://github.com/danusha2345/teslausb-ng/blob/main-dev/ROADMAP.md)
+        in case the issue is already tracked.
+
+  - type: input
+    id: version
     attributes:
-      label: Describe the problem
-      description: |
-        Add a clear and concise description of what you think the problem is, and how to reproduce it.
+      label: teslausb-ng version
+      description: "Output of `git -C /root/bin log -1 --format=%h` on the Pi, or the prebuilt image filename."
+      placeholder: "e.g. 015a502 or teslausb-ng-1.0.0.img.xz"
     validations:
       required: true
 
   - type: dropdown
-    id: devicemodel
+    id: pi_model
     attributes:
-      label: Device
-      description: What model device are you using?
-      multiple: false
+      label: Raspberry Pi (or SBC) model
+      description: "From `cat /sys/firmware/devicetree/base/model`."
       options:
         - Raspberry Pi Zero W
         - Raspberry Pi Zero 2 W
+        - Raspberry Pi 3 / 3B+
         - Raspberry Pi 4
         - Raspberry Pi 5
+        - Rock Pi 4 / 4C plus
         - Radxa Zero
-        - Rock Pi 4C plus
-        - Other
+        - Other (please describe in "Additional information")
     validations:
       required: true
 
   - type: dropdown
     id: image
     attributes:
-      label: OS Image
-      description: Which OS did you install?
-      multiple: false
+      label: OS image
       options:
-        - Prebuilt TeslaUSB image
+        - teslausb-ng prebuilt image
+        - marcone/teslausb prebuilt image (migrated)
+        - Raspberry Pi OS Bookworm + manual setup
         - Armbian
-        - other
+        - Other
     validations:
       required: true
 
-  - type: dropdown
-    id: carmodel
+  - type: input
+    id: tesla_model
     attributes:
-      label: Car Model
-      description: In which model car are you seeing the problem?
-      multiple: false
-      options:
-        - Model S
-        - Model 3
-        - Model X
-        - Model Y
+      label: Tesla model + firmware version
+      description: "Tesla rotates BLE/USB protocols between firmware versions. The firmware ID matters as much as the model."
+      placeholder: "e.g. Model Y 2024 / firmware 2024.20.4"
     validations:
       required: true
 
   - type: dropdown
     id: usbconnection
     attributes:
-      label: USB connection
-      description: How are you connecting to the car?
-      multiple: false
+      label: USB connection point
       options:
         - Center console
         - Glove box
+        - Front USB (Model S/X)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: archive_backend
+    attributes:
+      label: Archive backend
+      description: "From `ARCHIVE_SYSTEM` in your teslausb_setup_variables.conf."
+      options:
+        - rsync
+        - rclone
+        - cifs
+        - nfs
+        - none
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What you expected to happen vs. what actually happened
+      description: |
+        Be concrete. "Sentry mode doesn't work" is harder to act on than
+        "After v1.2.1, the BLE retry logs three attempts but the car never wakes;
+        archiveloop continues normally afterwards."
     validations:
       required: true
 
   - type: textarea
     id: logs
     attributes:
-      label: Logs
+      label: Relevant log slice
       description: |
-        If the web interface is working, use it to download diagnostics and copy/paste or attach them here.
-        If the web interface is not working but you can ssh in to the Pi, run `sudo /root/bin/setup-teslausb diagnose` on the Pi to obtain diagnostics and attach them here.
+        Paste from at least one of:
+        - `journalctl -u teslausb -n 200`
+        - `/mutable/archiveloop.log` (last ~200 lines)
+        - `/mutable/archive-verbose.log` (if you set `ARCHIVE_VERBOSE=true`)
+        - The web UI → Diagnostics tab → "Download diagnostics"
+        Strip Wi-Fi passwords / Tesla tokens before pasting.
+      render: text
+    validations:
+      required: true
 
   - type: textarea
     id: additional
     attributes:
       label: Additional information
-      description: |
-        Add any other relevant context for the problem.
+      description: "Recurrence pattern, what you changed last, screenshots of the web UI, other things you've tried, etc."
+    validations:
+      required: false

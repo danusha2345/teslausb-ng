@@ -6,6 +6,41 @@
 
 If `teslausb-ng` saves you time or makes your Tesla life better, consider supporting development via [Boosty](https://boosty.to/danusha/donate). Boosty accepts cards from anywhere in the world.
 
+---
+
+## 🧪 Testers Wanted — We Don't Have a Tesla
+
+> **The maintainer of this fork does not own a Tesla and does not have a
+> Raspberry Pi to test on.** Every change ships behind CI (ShellCheck,
+> Playwright smoke, path-traversal unit tests), but the real archive loop,
+> BLE pairing, USB-gadget enumeration, OneDrive sync, and Sentry recording
+> can only be verified on actual hardware — by **you**.
+>
+> If you run this fork on a real Pi connected to a real Tesla, **please
+> report what you see**, both good and bad:
+>
+> - ✅ **It works** → comment on the matching issue (or open a new one) with
+>   your Pi model, Tesla model + firmware, archive backend, and confirm
+>   the v1.0+ behavior. One short "works for me" comment from a real user
+>   is worth a hundred green CI runs.
+> - ❌ **It breaks** → open an issue with:
+>     1. The teslausb-ng commit you're running (`git -C /root/bin log -1`
+>        or the image filename).
+>     2. Your hardware (`cat /sys/firmware/devicetree/base/model`).
+>     3. Your Tesla model + current firmware version.
+>     4. The archive backend (`rsync` / `rclone` / `cifs` / `nfs` / `none`).
+>     5. The relevant slice of `journalctl -u teslausb` and
+>        `/mutable/archiveloop.log`.
+> - 🧪 **You're willing to be a recurring tester** → say so in the issue;
+>   we'll ping you for pre-release smoke before tagging.
+>
+> Without a steady stream of hardware reports this fork will drift the
+> same way upstream did. Help us not repeat that.
+>
+> **File issues at:** https://github.com/danusha2345/teslausb-ng/issues
+
+---
+
 ## What's new in teslausb-ng vs upstream
 
 | Area | upstream `marcone/teslausb` | this fork (`teslausb-ng`) |
