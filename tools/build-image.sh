@@ -66,6 +66,22 @@ echo ">>> Preparing pi-gen with teslausb sources"
     echo "----------------------------------------------------"
   fi
 
+  # 01-run.sh tries to `systemctl enable rpi-resize` — that service unit
+  # is provided by one of the packages we just stripped (likely
+  # rpi-loop-utils). Pi-gen treats the enable failure as fatal. Comment
+  # out the line: teslausb-ng users can resize manually with
+  # `sudo raspi-config --expand-rootfs` post-flash. Tracked in
+  # ROADMAP §1.1.6 — eventually we should re-introduce the resize-on-
+  # first-boot path via a self-contained systemd unit in
+  # pi-gen-sources/00-teslausb-tweaks/files/systemd/.
+  local_run="stage2/01-sys-tweaks/01-run.sh"
+  if [[ -f "$local_run" ]] && grep -q 'systemctl enable rpi-resize' "$local_run"; then
+    sed -i.bak \
+        -e 's|systemctl enable rpi-resize|: # teslausb-ng: rpi-resize.service stripped, skip enable|' \
+        "$local_run"
+    echo "Patched $local_run to skip rpi-resize.service enable."
+  fi
+
   "$REPO_ROOT/pi-gen-sources/prepare.sh"
 )
 
