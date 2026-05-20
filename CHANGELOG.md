@@ -57,15 +57,18 @@ real-hardware verification — see the README banner.
 
 ### CI
 
-- `.github/workflows/build-image.yml` is now `workflow_dispatch`
-  only. Pi-gen master's `scripts/dependencies_check` hardcodes a
-  `qemu-arm-static` → `qemu-user-binfmt` mapping that conflicts
-  at the dpkg level with `qemu-user-static` on Ubuntu Noble.
-  We tried five different fix attempts (Docker mode + qemu-user-static,
-  native mode + qemu-user-binfmt, equivs dummy package,
-  sed-patch on `depends`, …) — none survived because the check
-  is in the script, not the data file. Locally `tools/build-image.sh`
-  works on Debian Bookworm hosts. Tracked in ROADMAP §1.1.6.
+- `.github/workflows/build-image.yml` now successfully builds the
+  pi-gen image on tag push. After six wrong turns we finally read
+  pi-gen's `depends` file correctly: the format is `tool:package`,
+  so the entry `qemu-arm:qemu-user-binfmt` means pi-gen checks
+  `hash qemu-arm` and only suggests `qemu-user-binfmt` as a hint
+  when the tool is missing. The qemu-arm binary actually lives in
+  the `qemu-user` package, which does NOT conflict with
+  `qemu-user-static` on Ubuntu Noble. Installing both packages
+  satisfies pi-gen's tool check and gives debootstrap the static
+  binary it needs for the chroot. Tag pushes attach the resulting
+  .img.xz to the matching GitHub Release via
+  softprops/action-gh-release.
 
 [v1.1.0]: https://github.com/danusha2345/teslausb-ng/releases/tag/v1.1.0
 

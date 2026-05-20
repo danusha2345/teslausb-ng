@@ -1,12 +1,9 @@
 name: Build Image
 
-# NOTE: pi-gen master's dependency check (scripts/dependencies_check) maps
-# qemu-arm-static → the qemu-user-binfmt package, which conflicts with
-# qemu-user-static on Ubuntu Noble at the dpkg level. Until upstream pi-gen
-# either accepts qemu-user-static or the runner ships a friendlier OS, this
-# workflow is opt-in via manual dispatch — tag pushes won't auto-fail it.
-# Track the upstream side at https://github.com/RPi-Distro/pi-gen/issues
 on:
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
     inputs:
       pi_gen_ref:
@@ -31,20 +28,28 @@ jobs:
           platforms: arm64,arm
 
       - name: Install pi-gen native build dependencies
-        # Native pi-gen (./build.sh) avoids the binfmt_misc-in-container
-        # surface that broke ./build-docker.sh. tools/build-image.sh
-        # patches pi-gen's depends file to drop qemu-user-binfmt (which
-        # conflicts with qemu-user-static on Ubuntu Noble); we install
-        # qemu-user-static and let it auto-register the binfmt_misc
-        # handlers via update-binfmts.
+        # Pi-gen's depends file uses the "tool:package" format. The relevant
+        # entry is `qemu-arm:qemu-user-binfmt`, meaning pi-gen verifies the
+        # presence of the qemu-arm binary (via `hash qemu-arm`) and only
+        # suggests installing qemu-user-binfmt as a hint when the check
+        # fails. The qemu-arm BINARY comes from qemu-user (NOT qemu-user-
+        # binfmt nor qemu-user-static). qemu-user and qemu-user-static do
+        # not conflict on Ubuntu Noble — only qemu-user-binfmt conflicts
+        # with qemu-user-static. Install both: qemu-user satisfies
+        # pi-gen's `hash qemu-arm` check; qemu-user-static provides the
+        # qemu-arm-static binary that pi-gen's debootstrap step copies
+        # into the chroot.
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            coreutils quilt parted qemu-user-static debootstrap \
-            zerofree zip dosfstools libarchive-tools libcap2-bin \
-            grep rsync xz-utils file git curl bc qemu-utils kpartx \
-            gpg pigz arch-test
+            coreutils quilt parted qemu-user qemu-user-static \
+            debootstrap zerofree zip dosfstools libarchive-tools \
+            libcap2-bin grep rsync xz-utils file git curl bc \
+            qemu-utils kpartx gpg pigz arch-test xxd kmod
           sudo update-binfmts --enable || true
+          # Sanity-check what pi-gen will check.
+          hash qemu-arm && echo "qemu-arm: $(command -v qemu-arm)"
+          hash qemu-arm-static && echo "qemu-arm-static: $(command -v qemu-arm-static)"
           arch-test armhf || true
           arch-test arm64 || true
 
