@@ -17,6 +17,8 @@
 . /root/teslausb_setup_variables.conf 2> /dev/null || true
 # shellcheck disable=SC1091
 . /root/bin/_retry.sh 2> /dev/null || true
+# shellcheck disable=SC1091
+. /root/bin/_ble_health.sh 2> /dev/null || true
 
 # Parse QUERY_STRING into key=value pairs and extract action=.
 declare -a urlargs
@@ -87,17 +89,20 @@ run_tesla_control() {
 if command -v retry_with_backoff > /dev/null \
   && retry_with_backoff 3 5 -- run_tesla_control > /dev/null
 then
+  command -v _ble_health_record_success > /dev/null && _ble_health_record_success
   echo "HTTP/1.0 200 OK"
   echo "Content-type: application/json"
   echo
   echo "{\"ok\":true,\"action\":\"$action\"}"
 elif run_tesla_control > /dev/null
 then
+  command -v _ble_health_record_success > /dev/null && _ble_health_record_success
   echo "HTTP/1.0 200 OK"
   echo "Content-type: application/json"
   echo
   echo "{\"ok\":true,\"action\":\"$action\"}"
 else
+  command -v _ble_health_record_failure > /dev/null && _ble_health_record_failure
   echo "HTTP/1.0 503 Service Unavailable"
   echo "Content-type: application/json"
   echo

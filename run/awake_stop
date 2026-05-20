@@ -2,6 +2,8 @@
 
 # shellcheck disable=SC1091
 . /root/bin/_retry.sh 2> /dev/null || true
+# shellcheck disable=SC1091
+. /root/bin/_ble_health.sh 2> /dev/null || true
 
 if [[ ( -z "${TESLAFI_API_TOKEN:+x}" ) && ( -z "${TESSIE_API_TOKEN:+x}" ) && ( -z "${TESLA_BLE_VIN:+x}" ) && ( -z "${KEEP_AWAKE_WEBHOOK_URL:+x}" ) ]]
 then
@@ -98,11 +100,14 @@ case "${SENTRY_CASE}" in
           /root/bin/tesla-control -ble -key-file /root/.ble/key_private.pem -vin "${TESLA_BLE_VIN^^}" sentry-mode off
       then
         log "Tesla BLE: Command sent to disable Sentry Mode."
+        command -v _ble_health_record_success > /dev/null && _ble_health_record_success
       elif /root/bin/tesla-control -ble -key-file /root/.ble/key_private.pem -vin "${TESLA_BLE_VIN^^}" sentry-mode off
       then
         log "Tesla BLE: Command sent to disable Sentry Mode."
+        command -v _ble_health_record_success > /dev/null && _ble_health_record_success
       else
         log "Tesla BLE: Could not disable Sentry Mode (car may be asleep, BLE out of range, or pairing invalid). This is often transient."
+        command -v _ble_health_record_failure > /dev/null && _ble_health_record_failure
       fi
 
     elif [[ -n "${KEEP_AWAKE_WEBHOOK_URL:+x}" ]]
