@@ -1,0 +1,23 @@
+{
+  "$meta": {
+    "language": "English",
+    "code": "en"
+  },
+  "quick.label": "Quick BLE:",
+  "quick.lock": "Lock",
+  "quick.unlock": "Unlock",
+  "quick.honk": "Honk",
+  "quick.sentry_on": "Sentry ON",
+  "quick.sentry_off": "Sentry OFF",
+  "quick.wake": "Wake",
+
+  "tab.diagnostics": "Diagnostics",
+  "tab.archive_log": "Archiveloop log",
+  "tab.setup_log": "Setup log",
+  "tab.tools": "Tools",
+  "tab.recordings": "Recordings",
+  "tab.files": "Files",
+  "tab.viewer": "Viewer",
+
+  "header.github_link": "teslausb-ng on GitHub"
+}

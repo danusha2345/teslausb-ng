@@ -18,6 +18,7 @@
      classic scripts so existing inline code can call them without imports. -->
 <script src="js/utils.js"></script>
 <script src="js/cgi.js"></script>
+<script src="js/i18n.js"></script>
 <meta name="msapplication-TileColor" content="#00aba9">
 <meta name="msapplication-config" content="/icons/browserconfig.xml">
 <meta name="theme-color" content="#ffffff">
@@ -819,13 +820,13 @@ video {
   Sits above the tab UI so it's reachable on every tab.
 -->
 <div id="quick-actions-panel" hidden style="background:#222;color:#eee;padding:6px 10px;display:flex;gap:6px;align-items:center;font:13px/1.4 sans-serif;border-bottom:1px solid #333;">
-  <span style="opacity:.7;margin-right:4px">Quick BLE:</span>
-  <button data-ble-action="lock"        type="button">Lock</button>
-  <button data-ble-action="unlock"      type="button">Unlock</button>
-  <button data-ble-action="honk"        type="button">Honk</button>
-  <button data-ble-action="sentry-on"   type="button">Sentry ON</button>
-  <button data-ble-action="sentry-off"  type="button">Sentry OFF</button>
-  <button data-ble-action="wake"        type="button">Wake</button>
+  <span style="opacity:.7;margin-right:4px" data-i18n="quick.label">Quick BLE:</span>
+  <button data-ble-action="lock"        type="button" data-i18n="quick.lock">Lock</button>
+  <button data-ble-action="unlock"      type="button" data-i18n="quick.unlock">Unlock</button>
+  <button data-ble-action="honk"        type="button" data-i18n="quick.honk">Honk</button>
+  <button data-ble-action="sentry-on"   type="button" data-i18n="quick.sentry_on">Sentry ON</button>
+  <button data-ble-action="sentry-off"  type="button" data-i18n="quick.sentry_off">Sentry OFF</button>
+  <button data-ble-action="wake"        type="button" data-i18n="quick.wake">Wake</button>
 </div>
 
 <div class="tabholder">
@@ -839,17 +840,17 @@ video {
   <input class="tabradiobtn" type="radio" name="tabs" id="tab6">
   <input class="tabradiobtn" type="radio" name="tabs" id="tab7" checked>
   <div class="tabheaderholder">
-    <label for="tab1" class="tablabel tablabel1">Diagnostics</label>
-    <label for="tab2" class="tablabel tablabel2">Archiveloop log</label>
-    <label for="tab3" class="tablabel tablabel3">Setup log</label>
-    <label for="tab4" class="tablabel tablabel4">Tools</label>
-    <label for="tab5" class="tablabel tablabel5">Recordings</label>
-    <label for="tab6" class="tablabel tablabel6">Files</label>
-    <label for="tab7" class="tablabel tablabel7">Viewer</label>
+    <label for="tab1" class="tablabel tablabel1" data-i18n="tab.diagnostics">Diagnostics</label>
+    <label for="tab2" class="tablabel tablabel2" data-i18n="tab.archive_log">Archiveloop log</label>
+    <label for="tab3" class="tablabel tablabel3" data-i18n="tab.setup_log">Setup log</label>
+    <label for="tab4" class="tablabel tablabel4" data-i18n="tab.tools">Tools</label>
+    <label for="tab5" class="tablabel tablabel5" data-i18n="tab.recordings">Recordings</label>
+    <label for="tab6" class="tablabel tablabel6" data-i18n="tab.files">Files</label>
+    <label for="tab7" class="tablabel tablabel7" data-i18n="tab.viewer">Viewer</label>
 
     <div class="stretchable"></div>
 
-    <a href="https://www.github.com/marcone/teslausb" target="_blank" class="githublink">TeslaUSB on GitHub</a>
+    <a href="https://github.com/danusha2345/teslausb-ng" target="_blank" class="githublink" data-i18n="header.github_link">teslausb-ng on GitHub</a>
 
     <div class="settingsbuttondiv" title="Settings">
       <svg class="settingsbutton" viewBox="0 0 38 38">

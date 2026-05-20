@@ -1,0 +1,23 @@
+{
+  "$meta": {
+    "language": "Русский",
+    "code": "ru"
+  },
+  "quick.label": "Быстрые BLE:",
+  "quick.lock": "Запереть",
+  "quick.unlock": "Открыть",
+  "quick.honk": "Сигнал",
+  "quick.sentry_on": "Sentry ВКЛ",
+  "quick.sentry_off": "Sentry ВЫКЛ",
+  "quick.wake": "Разбудить",
+
+  "tab.diagnostics": "Диагностика",
+  "tab.archive_log": "Лог архивирования",
+  "tab.setup_log": "Лог установки",
+  "tab.tools": "Инструменты",
+  "tab.recordings": "Записи",
+  "tab.files": "Файлы",
+  "tab.viewer": "Просмотр",
+
+  "header.github_link": "teslausb-ng на GitHub"
+}

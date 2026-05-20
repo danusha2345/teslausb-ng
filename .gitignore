@@ -4,3 +4,18 @@
 *.ipr
 *.iws
 .idea/
+
+# Playwright web-UI test harness runtime (installed into tests/webui/ on first
+# `npm install`; not checked in).
+tests/webui/node_modules/
+tests/webui/package-lock.json
+tests/webui/test-results/
+tests/webui/playwright-report/
+
+# Local pi-gen image build output (created by tools/build-image.sh)
+deploy/
+.pi-gen-build/
+
+# Stray local files (screenshots, etc.)
+*.jpg
+*.jpeg
