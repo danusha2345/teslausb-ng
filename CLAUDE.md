@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **teslausb-ng** (658 symbols, 1296 relationships, 39 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **teslausb-ng** (715 symbols, 1356 relationships, 40 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -39,8 +39,5 @@ This project is indexed by GitNexus as **teslausb-ng** (658 symbols, 1296 relati
 | Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
 | Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
-| Work in the Html area (86 symbols) | `.claude/skills/generated/html/SKILL.md` |
-| Work in the Run area (41 symbols) | `.claude/skills/generated/run/SKILL.md` |
-| Work in the Teslausb-www area (9 symbols) | `.claude/skills/generated/teslausb-www/SKILL.md` |
 
 <!-- gitnexus:end -->
