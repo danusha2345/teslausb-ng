@@ -44,20 +44,26 @@ echo ">>> Preparing pi-gen with teslausb sources"
   git reset --hard "origin/$PI_GEN_REF" 2> /dev/null || git reset --hard origin/master
 
   # Pi-gen master's stage2/01-sys-tweaks/00-packages lists several
-  # Raspberry-Pi-specific packages (rpi-swap, rpi-loop-utils,
-  # rpi-usb-gadget) that ship only in archive.raspberrypi.com and not
-  # in the plain Debian Bookworm mirror that the runner can reach
-  # without RPi GPG keys. Teslausb is a headless dashcam appliance —
-  # none of those three are functionally required. Strip them so
-  # apt-get install proceeds.
+  # Raspberry-Pi-specific packages that ship only in archive.raspberrypi.com
+  # and miss the snapshot our chroot can reach. Some live on the same line
+  # as other packages ("rpi-swap rpi-loop-utils", "rpi-usb-gadget
+  # modemmanager-"), so a whole-line delete doesn't catch them. Use word-
+  # boundary substitution to strip the individual tokens and tidy stray
+  # leading/trailing whitespace afterwards.
   local_packages="stage2/01-sys-tweaks/00-packages"
   if [[ -f "$local_packages" ]]; then
     sed -i.bak \
-        -e '/^rpi-swap$/d' \
-        -e '/^rpi-loop-utils$/d' \
-        -e '/^rpi-usb-gadget$/d' \
+        -e 's/\brpi-swap\b//g' \
+        -e 's/\brpi-loop-utils\b//g' \
+        -e 's/\brpi-usb-gadget\b//g' \
+        -e 's/  */ /g' \
+        -e 's/^ //' \
+        -e 's/ $//' \
         "$local_packages"
-    echo "Patched $local_packages to skip rpi-swap / rpi-loop-utils / rpi-usb-gadget."
+    echo "Patched $local_packages to strip rpi-swap / rpi-loop-utils / rpi-usb-gadget."
+    echo "--- effective stage2/01-sys-tweaks/00-packages ---"
+    cat "$local_packages"
+    echo "----------------------------------------------------"
   fi
 
   "$REPO_ROOT/pi-gen-sources/prepare.sh"
