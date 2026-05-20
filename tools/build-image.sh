@@ -42,6 +42,24 @@ echo ">>> Preparing pi-gen with teslausb sources"
   git fetch origin
   git checkout "$PI_GEN_REF" 2> /dev/null || git checkout master
   git reset --hard "origin/$PI_GEN_REF" 2> /dev/null || git reset --hard origin/master
+
+  # Pi-gen master's stage2/01-sys-tweaks/00-packages lists several
+  # Raspberry-Pi-specific packages (rpi-swap, rpi-loop-utils,
+  # rpi-usb-gadget) that ship only in archive.raspberrypi.com and not
+  # in the plain Debian Bookworm mirror that the runner can reach
+  # without RPi GPG keys. Teslausb is a headless dashcam appliance —
+  # none of those three are functionally required. Strip them so
+  # apt-get install proceeds.
+  local_packages="stage2/01-sys-tweaks/00-packages"
+  if [[ -f "$local_packages" ]]; then
+    sed -i.bak \
+        -e '/^rpi-swap$/d' \
+        -e '/^rpi-loop-utils$/d' \
+        -e '/^rpi-usb-gadget$/d' \
+        "$local_packages"
+    echo "Patched $local_packages to skip rpi-swap / rpi-loop-utils / rpi-usb-gadget."
+  fi
+
   "$REPO_ROOT/pi-gen-sources/prepare.sh"
 )
 
