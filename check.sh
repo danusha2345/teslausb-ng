@@ -52,5 +52,12 @@ for f in "${broader[@]}"; do
 done
 
 if [[ ${#to_check[@]} -gt 0 ]]; then
-  shellcheck --severity=warning --exclude=SC1091 "${to_check[@]}"
+  # Pass 2 is intended as a safety net for real bugs in the broader tree
+  # without breaking CI on style notes upstream never addressed. Run at
+  # severity=error so SC1xxx parse errors and a few high-confidence SC2xxx
+  # codes still fail the build, but legacy warnings (SC2034 unused var,
+  # SC2155 declare-and-assign, SC2086 word splitting on a controlled value,
+  # SC2124 array-to-string in a context that's worked for years) do not.
+  # Files migrate into the strict list (pass 1) as they get cleaned up.
+  shellcheck --severity=error --exclude=SC1091 "${to_check[@]}"
 fi

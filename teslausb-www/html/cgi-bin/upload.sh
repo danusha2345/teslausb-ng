@@ -13,7 +13,7 @@ done
 . "$(dirname "$0")/_validate_path.sh"
 validate_cgi_base
 validate_cgi_operands
-cd "$_CGI_BASE"
+cd "$_CGI_BASE" || exit 1
 
 destpath="${urlargs[1]}"
 echo $destpath >> /tmp/upload.txt
