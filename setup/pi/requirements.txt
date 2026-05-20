@@ -1,0 +1,24 @@
+# Pinned Python dependencies for teslausb-ng.
+#
+# Why pin: the upstream project's setup runs `pip3 install <pkg>` ad-hoc with
+# no version constraint, so a routine apt/pip refresh can silently change the
+# behavior of the Tesla API or AWS SNS notifications. Pin to known-good
+# versions and bump deliberately.
+#
+# Bump policy: review changelogs before raising a pin. teslapy in particular
+# moves quickly when Tesla rotates their API.
+#
+# Install via configure.sh's install_python3_pip helper:
+#     pip3 install -r setup/pi/requirements.txt --break-system-packages
+
+# Tesla owner API client (used by run/tesla_api.py).
+teslapy~=2.9
+
+# HTTP client (used by run/tesla_api.py for direct REST calls).
+requests~=2.32
+
+# AWS SNS push notifications (NOTIFICATION_AWS_SNS).
+boto3~=1.34
+
+# Matrix push notifications (NOTIFICATION_MATRIX_*).
+matrix-nio~=0.25

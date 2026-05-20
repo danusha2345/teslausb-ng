@@ -365,7 +365,9 @@ function install_archive_scripts () {
 
   log_progress "Installing base archive scripts into $install_path"
   copy_script setup/pi/envsetup.sh "$install_path"
+  copy_script setup/pi/requirements.txt "$install_path"
   copy_script run/archiveloop "$install_path"
+  copy_script run/_retry.sh "$install_path"
   copy_script run/waitforidle "$install_path"
   copy_script run/remountfs_rw "$install_path"
   copy_script run/awake_start "$install_path"
@@ -391,14 +393,35 @@ function install_python3_pip () {
   fi
 }
 
-function install_sns_packages () {
+function install_pinned_python_requirements () {
   install_python3_pip
+  # Try the location the install copies into first; fall back to the source
+  # checkout (setup running directly from the repo, e.g. install.sh path).
+  local req_file
+  for candidate in /root/bin/requirements.txt "${SOURCE_DIR:-/tmp/sourcedir}/setup/pi/requirements.txt"; do
+    if [[ -f "$candidate" ]]; then
+      req_file="$candidate"
+      break
+    fi
+  done
+  if [[ -n "${req_file:-}" ]]; then
+    setup_progress "Installing pinned Python deps from $req_file..."
+    pip3_install -r "$req_file"
+  else
+    setup_progress "WARNING: requirements.txt not found, falling back to ad-hoc installs"
+  fi
+}
+
+function install_sns_packages () {
+  # Pinned Python deps include boto3, but keep the per-feature function
+  # for callers that haven't been migrated yet.
+  install_pinned_python_requirements
   setup_progress "Installing sns python packages..."
   pip3_install boto3
 }
 
 function install_matrix_packages () {
-  install_python3_pip
+  install_pinned_python_requirements
   setup_progress "Installing matrix python packages..."
   pip3_install matrix-nio
 }
@@ -407,13 +430,26 @@ function install_tesla_ble_packages () {
   local install_path="$1"
   local binary_dir=/tmp/binarydir
 
+  # TESLA_BLE_BINARY_TAG: GitHub release tag of MikeBishop's pre-built
+  # tesla-vehicle-command binaries to install. Default "latest" preserves
+  # upstream behavior; set this in teslausb_setup_variables.conf to pin
+  # to a known-good release (e.g. "v0.4.0") when Tesla rotates protocol
+  # details and a newer build breaks pairing.
+  local tag="${TESLA_BLE_BINARY_TAG:-latest}"
+  local url_tag
+  if [[ "$tag" == "latest" ]]; then
+    url_tag="latest/download"
+  else
+    url_tag="download/$tag"
+  fi
+
   umount "$binary_dir" &> /dev/null || true
   rm -rf "$binary_dir"
   mkdir -p "$binary_dir"
   mount -t tmpfs none "$binary_dir"
   (
     cd "$binary_dir"
-    curlwrapper -L "https://github.com/MikeBishop/tesla-vehicle-command-arm-binaries/releases/latest/download/vehicle-command-binaries-linux-armv6.tar.gz" | tar zxf - --strip-components=1
+    curlwrapper -L "https://github.com/MikeBishop/tesla-vehicle-command-arm-binaries/releases/${url_tag}/vehicle-command-binaries-linux-armv6.tar.gz" | tar zxf - --strip-components=1
   )
 
   for binary in tesla-control tesla-keygen; do
