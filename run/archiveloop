@@ -864,6 +864,7 @@ set_sys_param /proc/sys/vm/dirty_ratio DIRTY_RATIO 80
 set_sys_param /sys/devices/system/cpu/cpufreq/policy0/scaling_governor CPU_GOVERNOR conservative
 
 /root/bin/temperature_monitor &
+/root/bin/pmic_monitor &
 
 if has_cam_disk
 then

@@ -1,0 +1,82 @@
+#!/bin/bash -eu
+#
+# Pi 5 / Pi 4 PMIC under-voltage and throttling monitor.
+#
+# Polls `vcgencmd get_throttled` every PMIC_INTERVAL_SECONDS (default 60s)
+# and emits one notification via send-push-message when:
+#
+#   * the Pi enters an under-voltage state (bit 0)
+#   * the ARM frequency is currently capped (bit 1)
+#   * the CPU is currently throttled (bit 2)
+#   * the soft temperature limit is active (bit 3)
+#
+# Each condition is edge-triggered: one "entered" notification, one
+# "cleared" notification, no spam. Sticky-history bits (16–19) are NOT
+# notified — those are just "has ever happened" flags.
+#
+# Enable by setting PMIC_MONITOR=true in teslausb_setup_variables.conf.
+# Disable on devices without vcgencmd (e.g. non-Pi SBCs) — the script
+# exits silently if the binary isn't present.
+
+if [[ "${PMIC_MONITOR:-false}" != "true" ]]; then
+  log "PMIC Monitor: not enabled (set PMIC_MONITOR=true to enable)."
+  exit 0
+fi
+
+if ! command -v vcgencmd > /dev/null; then
+  log "PMIC Monitor: vcgencmd not found (non-Pi hardware?); exiting."
+  exit 0
+fi
+
+interval="${PMIC_INTERVAL_SECONDS:-60}"
+
+# Bit index → human label for each current-state condition.
+declare -A bit_labels=(
+  [0]="Under-voltage detected"
+  [1]="ARM frequency capped"
+  [2]="CPU throttled"
+  [3]="Soft temperature limit active"
+)
+
+# Track previous state so we only notify on edges.
+declare -A prev_state=(
+  [0]=0
+  [1]=0
+  [2]=0
+  [3]=0
+)
+
+emit() {
+  /root/bin/send-push-message "${NOTIFICATION_TITLE:-teslausb}:" "$1" pmic \
+    || log "PMIC Monitor: send-push-message failed (likely no network)."
+}
+
+while true; do
+  raw="$(vcgencmd get_throttled 2> /dev/null | sed 's/^throttled=//')"
+  if [[ -z "$raw" ]]; then
+    log "PMIC Monitor: vcgencmd returned no value, retrying in ${interval}s."
+    sleep "$interval"
+    continue
+  fi
+  # raw is a hex string like 0x50005. Convert to decimal.
+  value=$((raw))
+
+  for bit in 0 1 2 3; do
+    mask=$((1 << bit))
+    if (( value & mask )); then
+      now=1
+    else
+      now=0
+    fi
+    if [[ "$now" != "${prev_state[$bit]}" ]]; then
+      if (( now == 1 )); then
+        emit "PMIC: ${bit_labels[$bit]} (vcgencmd=$raw). Check power supply / cable / current draw."
+      else
+        emit "PMIC: ${bit_labels[$bit]} cleared (vcgencmd=$raw)."
+      fi
+      prev_state[$bit]=$now
+    fi
+  done
+
+  sleep "$interval"
+done
