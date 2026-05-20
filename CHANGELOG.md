@@ -4,6 +4,68 @@ All notable changes to teslausb-ng vs upstream `marcone/teslausb` are
 recorded here. Format follows [Keep a Changelog](https://keepachangelog.com/);
 versions follow SemVer.
 
+## v1.1.0 — 2026-05-20
+
+Quality release after `v1.0.0`. Several Tesla-side reliability problems
+addressed; most v1.0 doc stubs are now real implementations. Awaiting
+real-hardware verification — see the README banner.
+
+### Fixed (issues from upstream)
+
+- **#460** — Store credentials on a network share: real
+  `setup/pi/configure-creds.sh` lands, with a systemd CIFS mount unit
+  (`nofail`, 30s timeout) and a service override that symlinks the
+  decrypted conf into the path archiveloop already reads.
+
+### Added
+
+- **PMIC under-voltage + throttling monitor** (v1.2.5): `run/pmic_monitor`
+  polls `vcgencmd get_throttled`, edge-triggers one notification per
+  state change (under-voltage, ARM cap, throttled, soft-temp).
+  `PMIC_MONITOR=true` opts in.
+- **BLE health watchdog** (v1.2.4): `run/_ble_health.sh` tracks
+  consecutive `tesla-control` failures. After
+  `BLE_HEALTH_FAILURE_THRESHOLD=10` (default) consecutive failures,
+  sends one "Re-pair your BLE key" notification, then suppresses
+  until a success. On recovery, one "link recovered" message.
+- **BLE retry with exponential backoff** (v1.2.1): Sentry-mode
+  toggles use `retry_with_backoff 3 10` from `run/_retry.sh`.
+- **Quick-actions panel** (v1.3.5): six-button strip in the web UI
+  (Lock / Unlock / Honk / Sentry on/off / Wake) via a new
+  `cgi-bin/ble_action.sh` endpoint with the `_validate_path` /
+  `_retry` / `_ble_health` helpers wired in.
+- **Prominent "testers wanted" banner** in README + revised
+  `.github/ISSUE_TEMPLATE/{bug_report,works_for_me,config}.yml`
+  asking for commit hash, Pi model, Tesla firmware, archive
+  backend, and journalctl slice.
+- **ROADMAP.md** documents v1.1 → v2.0 milestones with sized
+  work items and per-section verification plans.
+- **GitNexus index** lands as a committed artifact (`.claude/skills/`,
+  `AGENTS.md`, `CLAUDE.md` — 719 nodes / 1360 edges / 40 flows).
+
+### Changed
+
+- **Dropped marcone/rsync 30 MB vendored binary** (v1.1.1).
+  `install_prebuilt_rsync` is deleted; stock Bookworm rsync 3.2.7
+  supersedes the prebuilt 3.2.3. `00-packages` gains an explicit
+  `rsync` entry. The marcone/rsync release notes confirm both
+  builds were plain compilations, no patches.
+- **ShellCheck strict scope expanded** from 12 to 30+ files
+  (v1.1.5). Eleven concrete fixes across nine files
+  (SC2155 / SC2124 / SC2046 / SC2034 / SC2038). Three-pass
+  `check.sh`: 1A strict / 1B warning / 2 error-only.
+
+### CI
+
+- `.github/workflows/build-image.yml` now installs the full
+  qemu-user + qemu-user-static + qemu-user-binfmt + binfmt-support
+  set so pi-gen Docker mode actually finds `qemu-arm`. The
+  v1.0.0 → v1.1.0 image builds failed on this; the tag was
+  retargeted at the fix commit so v1.1.0 attaches an image when
+  the next build succeeds.
+
+[v1.1.0]: https://github.com/danusha2345/teslausb-ng/releases/tag/v1.1.0
+
 ## v1.0.0 — 2026-05-20
 
 First public release of the community continuation. Upstream `marcone/teslausb`
