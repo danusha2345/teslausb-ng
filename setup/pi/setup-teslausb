@@ -978,6 +978,11 @@ then
   /tmp/configure-samba.sh
 fi
 
+# v1.1.3: CIFS credentials share. configure-creds.sh is a no-op unless
+# TESLAUSB_CREDS_SHARE is set, so it's safe to call unconditionally.
+copy_script setup/pi/configure-creds.sh /tmp
+/tmp/configure-creds.sh
+
 if [ -n "${AP_SSID:+x}" ]
 then
   copy_script setup/pi/configure-ap.sh /tmp

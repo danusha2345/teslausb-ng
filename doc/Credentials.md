@@ -41,19 +41,25 @@ TESLAUSB_CREDS_PASSWORD_FILE="/root/.credshare-pass"  # one-line file, mode 600
 TESLAUSB_CREDS_PATH="/var/teslausb-creds/setup_variables.conf"
 ```
 
-`setup/pi/configure-creds.sh` (run once during install) will:
+`setup/pi/configure-creds.sh` (run once during install, shipped in v1.1.3) does:
 
-1. Install `cifs-utils` if needed.
-2. Add a systemd `var-teslausb\\x2dcreds.mount` unit that mounts the share
-   read-only at boot.
-3. Order `teslausb.service` `After=var-teslausb-creds.mount` and
-   `Requires=var-teslausb-creds.mount`.
-4. Modify `rc.local` / `archiveloop` to source the file from the mounted path
-   instead of `/root/`.
+1. Installs `cifs-utils` if needed.
+2. Writes a CIFS credentials file at `/etc/teslausb-creds.cifs` (mode 0600)
+   from `TESLAUSB_CREDS_USER` + the contents of `TESLAUSB_CREDS_PASSWORD_FILE`.
+3. Writes a systemd mount unit at
+   `/etc/systemd/system/var-teslausb\x2dcreds.mount` that mounts the share
+   read-only at `/var/teslausb-creds` with `nofail` (so an unreachable NAS
+   doesn't block boot) and a 30s timeout.
+4. Drops in `/etc/systemd/system/teslausb.service.d/20-creds-share.conf`
+   that adds `RequiresMountsFor=/var/teslausb-creds` and
+   `ExecStartPre=/bin/ln -sf /var/teslausb-creds/$TESLAUSB_CREDS_PATH
+   /root/teslausb_setup_variables.conf`, so existing code reading from
+   `/root/teslausb_setup_variables.conf` keeps working unchanged.
 
-When the share is unreachable (Wi-Fi down, NAS rebooting) the unit retries
-without blocking the rest of boot, and archiveloop simply stays in its
-"waiting for archive" state.
+When the share is unreachable (Wi-Fi down, NAS rebooting) the mount unit
+returns with the `nofail` option, the symlink fails to create, and
+teslausb.service stays in its "waiting" state until the next restart.
+The Pi keeps SSH and the AP up because they don't depend on the share.
 
 ## What's NOT supported
 
