@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<!--
+  Minimal harness that loads the FileBrowser script without dragging in all
+  of index.html (which makes XHR calls to CGI endpoints that aren't reachable
+  during a static Playwright test). Playwright opens this file via file:// and
+  exercises the exported globals.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>teslausb-ng FileBrowser test harness</title>
+  </head>
+  <body>
+    <div id="fb-mount"></div>
+    <script src="../../teslausb-www/html/filebrowser.js"></script>
+  </body>
+</html>

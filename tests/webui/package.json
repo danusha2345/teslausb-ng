@@ -1,0 +1,12 @@
+{
+  "name": "teslausb-ng-webui-tests",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Playwright smoke tests for the teslausb-ng web UI.",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.46.0"
+  }
+}

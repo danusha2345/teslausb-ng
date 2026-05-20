@@ -42,3 +42,21 @@ jobs:
           npx --yes prettier@3 --check \
             "teslausb-www/html/**/*.{js,css,html}" \
             || echo "::warning::prettier formatting differences detected."
+
+  playwright:
+    name: Playwright smoke (web UI)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests/webui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Playwright + Chromium
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+      - name: Run smoke tests
+        run: npx playwright test --config=playwright.config.mjs
