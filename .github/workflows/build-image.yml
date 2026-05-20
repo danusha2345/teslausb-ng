@@ -29,18 +29,47 @@ jobs:
 
       - name: Install pi-gen native build dependencies
         # Native pi-gen (./build.sh) avoids the binfmt_misc-in-container
-        # surface that breaks ./build-docker.sh. The package set below is
-        # the one pi-gen's README recommends for Bookworm/Ubuntu Noble.
+        # surface that breaks ./build-docker.sh. Pi-gen's depends file
+        # insists on the literal qemu-user-binfmt package, which on
+        # Ubuntu Noble conflicts with qemu-user-static (both provide
+        # /usr/bin/qemu-arm). We need qemu-user-static's STATIC binary
+        # (qemu-arm-static) because pi-gen's debootstrap copies that
+        # into the chroot, so the only path that satisfies both checks
+        # is: install qemu-user-static for the actual functionality,
+        # then build and install a dummy qemu-user-binfmt via equivs so
+        # dpkg reports it present and pi-gen's depends check passes.
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             coreutils quilt parted qemu-user-static debootstrap \
             zerofree zip dosfstools libarchive-tools libcap2-bin \
             grep rsync xz-utils file git curl bc qemu-utils kpartx \
-            gpg pigz arch-test
-          # qemu-user-static auto-registers binfmt_misc via update-binfmts.
+            gpg pigz arch-test equivs
+          # Build a dummy qemu-user-binfmt package to satisfy pi-gen's
+          # depends list. qemu-user-static provides the actual binfmt
+          # registrations via update-binfmts.
+          mkdir -p /tmp/equivs && cd /tmp/equivs
+          cat > qemu-user-binfmt-stub.ctl <<'STUB'
+          Section: misc
+          Priority: optional
+          Standards-Version: 3.9.2
+          Package: qemu-user-binfmt
+          Version: 99
+          Maintainer: teslausb-ng CI <ci@example.com>
+          Architecture: all
+          Provides: qemu-user-binfmt
+          Description: Dummy package satisfying pi-gen's qemu-user-binfmt requirement
+           Functionality comes from qemu-user-static (installed in the same
+           apt step). pi-gen's build.sh checks for the literal package name
+           qemu-user-binfmt which conflicts with qemu-user-static on Ubuntu
+           Noble. This stub makes dpkg-query report the package as installed.
+          STUB
+          equivs-build qemu-user-binfmt-stub.ctl
+          sudo dpkg -i qemu-user-binfmt_99_all.deb
+          cd "$GITHUB_WORKSPACE"
+          # Make sure binfmt_misc handlers are live (they auto-register on
+          # qemu-user-static install but enabling is a no-op safety net).
           sudo update-binfmts --enable || true
-          # Verify ARM emulation works before pi-gen runs its own check.
           arch-test armhf || true
           arch-test armel || true
           arch-test arm64 || true
