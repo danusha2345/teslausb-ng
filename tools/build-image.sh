@@ -45,12 +45,15 @@ echo ">>> Preparing pi-gen with teslausb sources"
   "$REPO_ROOT/pi-gen-sources/prepare.sh"
 )
 
-echo ">>> Running pi-gen build (Docker mode)"
+echo ">>> Running pi-gen build (native mode)"
 (
   cd "$PI_GEN_DIR"
-  # build-docker.sh handles the QEMU + apt-cache setup. CONTINUE=1 lets us
-  # resume a partial build across reruns; CLEAN=1 forces a fresh stage tree.
-  CONTINUE="${PI_GEN_CONTINUE:-0}" CLEAN="${PI_GEN_CLEAN:-1}" ./build-docker.sh
+  # Native build.sh runs on the host, which avoids the binfmt_misc-in-
+  # privileged-container surface that breaks build-docker.sh on GitHub
+  # runners. Caller is responsible for installing the apt deps (the CI
+  # workflow does this; locally you'll get a missing-tool error and the
+  # apt install command pi-gen prints).
+  CONTINUE="${PI_GEN_CONTINUE:-0}" CLEAN="${PI_GEN_CLEAN:-1}" sudo ./build.sh
 )
 
 echo ">>> Copying artifacts to $DEPLOY_DIR"
