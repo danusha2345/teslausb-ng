@@ -4,6 +4,62 @@ All notable changes to teslausb-ng vs upstream `marcone/teslausb` are
 recorded here. Format follows [Keep a Changelog](https://keepachangelog.com/);
 versions follow SemVer.
 
+## v1.2.0 — 2026-05-21
+
+Visible-feature release on top of v1.1.0. The prebuilt-image pipeline
+that started working on v1.1.0 is still in place; this tag's image is
+attached automatically.
+
+### Added
+
+- **Web Push notifications** (v1.3.2): the web UI can subscribe a
+  browser as a `send-push-message` recipient. No Pushover / Telegram /
+  Gotify account needed; the Pi signs VAPID-encrypted pushes via
+  `pywebpush`. Opt-in with `WEBPUSH_ENABLED=true` in the conf file.
+  Service Workers require a secure context, so see `doc/WebPush.md`
+  for the HTTPS-setup options (reverse proxy with self-signed cert,
+  Tailscale, or `https://localhost`).
+- **CONTRIBUTING.md** and **CODE_OF_CONDUCT.md** spell out how to
+  send patches, the CI gates a PR has to clear, what we won't promise
+  (no stable internal API, no Buster/Bullseye support, no long-term
+  security backports), and the tone we expect.
+- **Project tool policy in `CLAUDE.md`** for AI-assisted editors:
+  GitNexus first, Serena only for the small Python surface, skip
+  graphify. Includes a hotspot cheat sheet and reindex policy
+  (`--skip-agents-md` required).
+
+### Refactored
+
+- **Second slice of the `index.html` ES-module split** (v1.1.2):
+  `js/recordings.js` pulls out `setLayout`, `cycleLayout`,
+  `hideRecordingParent`, `showDebugInfo`, `showcontrols`, the three
+  player skip/play functions, and the `currentLayout` state. The
+  inline `<script>` block shrinks from 2978 → 2868 lines; the 16
+  HTML `onclick` references and two immediate-call sites continue to
+  resolve through global scope. utils.js + cgi.js + recordings.js
+  cumulatively pull about 240 lines out of `index.html`.
+
+### Docs
+
+- `README.md` "Installing" gained a six-step Quick Start that
+  references our own `image_*-teslausb.zip` asset (not upstream's
+  inactive releases page) and includes the migration one-liner.
+- `doc/OneStepSetup.md` was updated from "Raspbian Buster Lite" to
+  Raspberry Pi OS Bookworm and now points at danusha2345/teslausb-ng
+  in all three of its outbound links.
+
+### Notes
+
+- Issue templates now sit at `.github/ISSUE_TEMPLATE/` —
+  `bug_report.yml`, `works_for_me.yml`, and `config.yml`. The
+  works-for-me template includes an opt-in checkbox to be pinged
+  before pre-release smoke tests.
+- All CI workflows green at v1.2.0 cut: ShellCheck, Lint & Format,
+  Build Image (~47 min on tag pushes, attaches the .img.xz to the
+  release).
+
+[v1.2.0]: https://github.com/danusha2345/teslausb-ng/releases/tag/v1.2.0
+
 ## v1.1.0 — 2026-05-20
 
 Quality release after `v1.0.0`. Several Tesla-side reliability problems
