@@ -4,6 +4,18 @@ All notable changes to teslausb-ng vs upstream `marcone/teslausb` are
 recorded here. Format follows [Keep a Changelog](https://keepachangelog.com/);
 versions follow SemVer.
 
+## Unreleased
+
+### Refactored
+
+- **Third slice of the `index.html` ES-module split** (v1.1.2):
+  `js/formatters.js` pulls out the pure formatter helpers — `byteRate`,
+  `bitRate`, `uptimeString`, `spaceString`, `timeString`,
+  `dateFromSeconds`, `dayNameFromDateString` — and the four
+  `Intl.DateTimeFormat` constants. All pure, no DOM, no XHR.
+  Inline `<script>` shrinks 2868 → 2801 lines. Cumulative since the
+  fork: 3108 → 2801 lines extracted (-307, ≈10% of the inline block).
+
 ## v1.2.0 — 2026-05-21
 
 Visible-feature release on top of v1.1.0. The prebuilt-image pipeline
