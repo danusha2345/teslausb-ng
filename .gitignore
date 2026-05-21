@@ -19,3 +19,7 @@ deploy/
 # Stray local files (screenshots, etc.)
 *.jpg
 *.jpeg
+
+# Python compile cache produced by `python3 -m py_compile`
+__pycache__/
+*.pyc

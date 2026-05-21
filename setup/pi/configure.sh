@@ -358,6 +358,7 @@ function install_archive_scripts () {
   copy_script run/_telemetry.sh "$install_path"
   copy_script run/_ble_health.sh "$install_path"
   copy_script run/pmic_monitor "$install_path"
+  copy_script run/send_webpush.py "$install_path"
   copy_script tools/install-creds-unit.sh "$install_path"
   copy_script run/waitforidle "$install_path"
   copy_script run/remountfs_rw "$install_path"

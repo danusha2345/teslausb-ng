@@ -2975,6 +2975,23 @@ mediaQuery.addListener(setCurrentTabName);
 
 
 </script>
+<!--
+  Web Push panel (v1.3.2): hidden by default. js/webpush.js reveals it when
+  the browser supports Service Workers + Push API AND the page is served from
+  a secure context (HTTPS or localhost). Clicking subscribes/unsubscribes via
+  cgi-bin/webpush_subscribe.sh; pushes are sent from run/send_webpush.py.
+-->
+<div id="webpush-panel" hidden style="background:#1c1c1c;color:#ddd;padding:5px 10px;display:flex;gap:6px;align-items:center;font:12px/1.4 sans-serif;border-top:1px solid #333;justify-content:flex-end;">
+  <span data-webpush-status style="opacity:.6;width:1em;text-align:right"></span>
+  <button data-webpush-toggle
+          data-label-subscribed="Disable browser notifications"
+          data-label-unsubscribed="Enable browser notifications"
+          data-label-blocked="Notifications blocked by browser"
+          type="button"
+          data-i18n="webpush.toggle">Enable browser notifications</button>
+</div>
+
 <script type="module" src="js/quickactions.js"></script>
+<script src="js/webpush.js"></script>
 </body>
 </html>

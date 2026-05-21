@@ -19,5 +19,7 @@
   "tab.files": "Files",
   "tab.viewer": "Viewer",
 
-  "header.github_link": "teslausb-ng on GitHub"
+  "header.github_link": "teslausb-ng on GitHub",
+
+  "webpush.toggle": "Enable browser notifications"
 }

@@ -22,3 +22,7 @@ boto3~=1.34
 
 # Matrix push notifications (NOTIFICATION_MATRIX_*).
 matrix-nio~=0.25
+
+# Web Push notifications (WEBPUSH_ENABLED) — used by run/send_webpush.py.
+pywebpush~=2.0
+cryptography~=42.0

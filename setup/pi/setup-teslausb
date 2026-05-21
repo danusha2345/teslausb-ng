@@ -983,6 +983,11 @@ fi
 copy_script setup/pi/configure-creds.sh /tmp
 /tmp/configure-creds.sh
 
+# v1.3.2: Web Push notifications. configure-webpush.sh is a no-op unless
+# WEBPUSH_ENABLED=true, so it's safe to call unconditionally too.
+copy_script setup/pi/configure-webpush.sh /tmp
+/tmp/configure-webpush.sh
+
 if [ -n "${AP_SSID:+x}" ]
 then
   copy_script setup/pi/configure-ap.sh /tmp

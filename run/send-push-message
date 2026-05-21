@@ -102,6 +102,12 @@ function send_ntfy () {
     "$NTFY_URL"
 }
 
+function send_webpush () {
+  log "Sending Web Push notification."
+  python3 /root/bin/send_webpush.py "$title" "$message" \
+    || log "Web Push: send_webpush.py failed (check VAPID setup + subscriptions)."
+}
+
 log "$message"
 
 [ "${SIGNAL_ENABLED:-false}" = "true" ] && send_signal
@@ -116,5 +122,6 @@ log "$message"
 [ "${SLACK_ENABLED:-false}" = "true" ] && send_slack
 [ "${NOTIFICATION_COMMAND_ENABLED:-false}" = "true" ] && send_shell
 [ "${NTFY_ENABLED:-false}" = "true" ] && send_ntfy
+[ "${WEBPUSH_ENABLED:-false}" = "true" ] && send_webpush
 
 exit 0
