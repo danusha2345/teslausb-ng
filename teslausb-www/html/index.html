@@ -14,10 +14,12 @@
 <script src="contextmenu.js"></script>
 <script src="filebrowser.js"></script>
 <!-- v1.1.2: utilities pulled out of the inline script in index.html. utils.js
-     must load before cgi.js (cgi.js depends on log/cachebustingurl). Both are
-     classic scripts so existing inline code can call them without imports. -->
+     must load before cgi.js (cgi.js depends on log/cachebustingurl) and
+     recordings.js (depends on localStorageSet/Get). Both classic scripts so
+     existing inline code can call the helpers without imports. -->
 <script src="js/utils.js"></script>
 <script src="js/cgi.js"></script>
+<script src="js/recordings.js"></script>
 <script src="js/i18n.js"></script>
 <meta name="msapplication-TileColor" content="#00aba9">
 <meta name="msapplication-config" content="/icons/browserconfig.xml">
@@ -1102,144 +1104,13 @@ var WORK_AROUND_WEBKIT_QUIRKS = true;
 // log() lives in js/utils.js; it reads window.DEBUG so the var above
 // continues to control its verbosity.
 
-function hideRecordingParent() {
-  var i = document.querySelector(".recordings");
-  if (i.contentWindow.location.pathname === "/TeslaCam/") {
-    var parentlink = i.contentDocument.querySelector("#list tbody tr");
-    parentlink.parentElement.removeChild(parentlink);
-  }
-}
-
-function showDebugInfo() {
-  if (DEBUG == false) {
-    return;
-  }
-  var db = document.getElementById('debuginfo');
-  var debuginfo = "segments: " + currentsequence.currentSegmentIdx() + "/" + currentsequence.length();
-  debuginfo += ", position: ";
-  for (var vid of videoelems) {
-    if (vid == undefined) {
-      debuginfo = debuginfo + "unused/"
-    } else {
-      debuginfo = debuginfo + parseInt(vid.currentTime) + "/";
-    }
-  }
-  db.innerText = debuginfo;
-}
-
-function showcontrols() {
-  var c=document.getElementById("videocontrols");
-  if (c.classList.contains("shown")) {
-    return;
-  }
-  c.classList.add("shown");
-  setTimeout(function() { c.classList.remove("shown"); }, 5000);
-}
-
+// v1.1.2 second slice: hideRecordingParent, showDebugInfo, showcontrols,
+// setLayout, cycleLayout, skipBack, startPlaying, skipForward,
+// and the `currentLayout` state, moved to js/recordings.js (loaded above
+// this inline block). The immediate-call sites stay here so DOM-ready
+// timing is preserved.
 showcontrols();
-
-var currentLayout = 1;
-
-function setLayout(layout) {
-  var leftrepeaterview = document.getElementById("leftrepeaterview");
-  var leftpillarview = document.getElementById("leftpillarview");
-  var rightrepeaterview = document.getElementById("rightrepeaterview");
-  var rightpillarview = document.getElementById("rightpillarview");
-  var backview = document.getElementById("backview");
-  var videogrid = document.querySelector(".videoholder");
-
-  if (layout == 3 || layout == 5 || layout == 6) {
-    leftrepeaterview.classList.remove("flipped");
-    rightrepeaterview.classList.remove("flipped");
-    backview.classList.remove("flipped");
-  }
-
-  if (layout == 1) {
-    // mirrorleft-front-mirrorright on top, map-mirrorrear-info on bottom
-    leftrepeaterview.classList.add("flipped");
-    rightrepeaterview.classList.add("flipped");
-    backview.classList.add("flipped");
-    videogrid.classList="videoholder layout1";
-  } else if (layout == 2) {
-    // map-front-info on top, mirrorleft-mirrorrear-mirrorright on bottom
-    leftrepeaterview.classList.add("flipped");
-    rightrepeaterview.classList.add("flipped");
-    backview.classList.add("flipped");
-    videogrid.classList="videoholder layout2";
-  } else if (layout == 4) {
-    // front on top, sides in middle, rear on bottom, mirrored
-    leftrepeaterview.classList.add("flipped");
-    rightrepeaterview.classList.add("flipped");
-    backview.classList.add("flipped");
-    videogrid.classList="videoholder layout4";
-  } else if (layout == 5) {
-    // front on top, sides in middle, rear on bottom
-    videogrid.classList="videoholder layout5";
-  } else if (layout == 6) {
-    // map-front-info on top, pillars on the side, repeaters and rear on bottom
-    videogrid.classList="videoholder layout6";
-  } else {
-    layout = 3;
-    // (default) map-front-info on top, right-rear-left on bottom
-    videogrid.classList="videoholder layout3";
-  }
-  currentLayout = layout;
-  localStorageSet("layout", layout);
-
-  var l = document.querySelector("#layouts.subnav-content");
-  for (var i = 0; i < l.childElementCount; i++) {
-    var item = l.children[i];
-    if (i == (currentLayout - 1) ) {
-      item.classList.add("selected");
-    } else {
-      item.classList.remove("selected");
-    }
-  }
-
-  if (typeof currentsequence !== 'undefined') {
-    setTimeout(function() {
-      for (var i=0; i < 6;i++) {
-        var v = videoelems[i];
-        var c = canvaselems[i];
-        
-        if (v.clientWidth > 0 && v.clientHeight > 0) {
-            c.width = v.clientWidth;
-            c.height = v.clientHeight;
-        }
-
-        if (v.style.visibility == "hidden") {
-           var ctx = c.getContext("2d");
-           if (v.classList.contains("flipped")) {
-             ctx.scale(-1, 1);
-             ctx.drawImage(v, 0, 0, -c.width, c.height);
-           } else {
-             ctx.drawImage(v, 0, 0, c.width, c.height);
-           }
-        }
-      }
-    }, 50);
-  }
-}
-
-function cycleLayout() {
-  setLayout(currentLayout + 1);
-}
-
 setLayout(localStorageGet("layout"));
-
-function skipBack() {
-  var slider=document.getElementById('position');
-  currentsequence.seekTo(parseInt(slider.value) - 10000);
-}
-
-function startPlaying() {
-  currentsequence.toggleplaypause();
-}
-
-function skipForward() {
-  var slider=document.getElementById('position');
-  currentsequence.seekTo(parseInt(slider.value) + 30000);
-}
 
 // download / cachebustingurl / isElementVisible / starttailing /
 // readyState / readfile / callcgi moved to js/utils.js + js/cgi.js
