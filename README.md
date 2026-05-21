@@ -172,8 +172,15 @@ image won't fit your hardware. Start with
 
 ## Contributing
 
-You're welcome to contribute to this repo by submitting pull requests and creating issues.
-For pull requests, please split complex changes into multiple pull requests when feasible, and follow the existing code style.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide — the short version:
+
+1. Run the prebuilt image on real hardware and file a `works_for_me` or
+   `bug_report` issue. **This is the most valuable contribution** because the
+   maintainer has no Tesla or Pi to test on.
+2. Open PRs against `main-dev`. One conceptual change per PR; CI must be
+   green; for `(L)` or `(XL)` items from [ROADMAP.md](ROADMAP.md) open an
+   issue first to align on scope.
+3. By contributing you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Meta
 
