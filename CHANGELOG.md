@@ -6,6 +6,17 @@ versions follow SemVer.
 
 ## Unreleased
 
+### Added
+
+- **HTTPS for the web UI** (`HTTPS_ENABLED=true`): `setup/pi/configure-https.sh`
+  generates a self-signed cert (SANs for `teslausb.local` / `teslausb` /
+  hostname, 10-year validity) and installs a 443 server block
+  (`teslausb-ssl.nginx`) alongside the existing port-80 block — `http://`
+  keeps working, `https://` is added. Mirrors the `auth_basic` setting from
+  `configure-web.sh` so web auth covers both ports. This is the easiest way
+  to give the Service Worker the secure context that v1.3.2 Web Push needs.
+  See `doc/HTTPS.md` for the one-time cert-trust step. LAN-only — no ACME.
+
 ### Refactored
 
 - **Third slice of the `index.html` ES-module split** (v1.1.2):
