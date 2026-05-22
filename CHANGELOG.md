@@ -13,8 +13,10 @@ versions follow SemVer.
   (`showsettings`, `closesettings`, `cancelsettings`,
   `confirmsettings`). `readconfig` / `initialize` stay inline (they're
   bootstrap glue coupled to FileBrowser, the tab DOM, and the
-  status-poll functions). Inline `<script>` is now 2674 lines.
-  Cumulative since the fork: 3108 → 2674 (-434, ≈14%) across
+  status-poll functions). Also moved the `stringtoseconds` /
+  `secondstostring` video-scrubber time parsers into
+  `js/formatters.js`. Inline `<script>` is now 2660 lines.
+  Cumulative since the fork: 3108 → 2660 (-448, ≈14%) across
   utils / cgi / formatters / throughput / recordings / settings.
 
 ## v1.2.1 — 2026-05-22
