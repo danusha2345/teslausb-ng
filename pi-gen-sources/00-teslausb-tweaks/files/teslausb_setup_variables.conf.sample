@@ -237,6 +237,20 @@ export CAM_SIZE=40G
 #export NTFY_TOKEN=your_token_if_needed
 #export NTFY_PRIORITY=3
 
+# Uncomment to deliver notifications to a subscribed web browser via Web Push
+# (teslausb-ng). Requires a secure context — see HTTPS_ENABLED below and
+# doc/WebPush.md. After enabling, click "Enable browser notifications" at the
+# bottom of the web UI.
+#export WEBPUSH_ENABLED=true
+# Optional contact used in the VAPID claim (defaults to mailto:teslausb@local):
+#export VAPID_CONTACT="mailto:you@example.com"
+
+# Uncomment to serve the web UI over HTTPS with a self-signed cert
+# (teslausb-ng). Needed for Web Push to work and to encrypt web-auth
+# credentials. http:// keeps working on port 80; https:// is added on 443.
+# See doc/HTTPS.md for the one-time cert-trust step.
+#export HTTPS_ENABLED=true
+
 # Tesla_dashcam / Trigger file support.
 # Uncomment any TRIGGER_FILE_xxxxx below to create trigger file(s) in the
 # archive directory for the listed clip type after all clips have been

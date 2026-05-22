@@ -13,16 +13,20 @@ on the Pi posts to that endpoint over VAPID-signed Web Push.
   unless the hostname is `localhost` or `127.0.0.1`. Hitting your Pi at
   `http://teslausb.local/` will NOT work — the panel stays hidden.
 
-For HTTPS you have three practical options:
+**The easiest way to get a secure context is the built-in HTTPS option** —
+set `HTTPS_ENABLED=true` in your conf file. teslausb-ng generates a
+self-signed cert and serves the UI on 443 alongside the existing port 80.
+See [HTTPS.md](HTTPS.md) for the full walkthrough (and the cert-trust step
+that makes Web Push work on Chrome, not just Firefox).
+
+Other options if you'd rather terminate TLS elsewhere:
 
 | Approach | Effort | Notes |
 |----------|--------|-------|
-| Run a reverse proxy (caddy / nginx) in front of the Pi with a self-signed cert | Medium | Have to trust the cert in your browser. Works on every device. |
+| `HTTPS_ENABLED=true` (built in) | Low | Self-signed cert + 443 block. Trust the cert once per device. See [HTTPS.md](HTTPS.md). |
+| Reverse proxy (Caddy / Traefik) in front of the Pi | Medium | Point it at the Pi's port 80; skip HTTPS_ENABLED. |
 | Tailscale / WireGuard with HTTPS termination at the gateway | Medium | Single-user setups; uses your VPN's TLS. |
-| Access via local IP and accept the security warning | Low | Some browsers (Chrome) silently refuse SW even after accepting; Firefox is more permissive. |
-
-A built-in self-signed-cert option is on the [ROADMAP](../ROADMAP.md) under
-Operations & community → "HTTPS by default".
+| Access via `http://localhost` with an SSH tunnel | Low | `ssh -L 8443:localhost:80 pi@teslausb.local`, then browse `http://localhost:8443`. |
 
 ## Enabling on the Pi
 

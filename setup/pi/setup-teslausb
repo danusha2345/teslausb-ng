@@ -1000,6 +1000,12 @@ copy_script setup/pi/configure-automount.sh /tmp
 copy_script setup/pi/configure-web.sh /tmp
 /tmp/configure-web.sh
 
+# v1.x: HTTPS for the web UI (unblocks Web Push). No-op unless
+# HTTPS_ENABLED=true, so safe to call unconditionally. Runs after
+# configure-web.sh so it can mirror the auth_basic decision.
+copy_script setup/pi/configure-https.sh /tmp
+/tmp/configure-https.sh
+
 copy_script setup/pi/configure-ssh.sh /tmp
 /tmp/configure-ssh.sh
 

@@ -1,0 +1,56 @@
+# teslausb-ng HTTPS server block (v1.x — installed by setup/pi/configure-https.sh
+# only when HTTPS_ENABLED=true). Mirrors the :80 block in teslausb.nginx but
+# listens on 443 with a self-signed cert. The :80 block stays in place so
+# existing http:// access and the cttseraser TeslaCam mount keep working.
+#
+# The auth_basic lines are toggled by configure-https.sh to match whatever
+# configure-web.sh applied to the HTTP block (so enabling web auth covers
+# both ports).
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    ssl_certificate     /etc/nginx/ssl/teslausb.crt;
+    ssl_certificate_key /etc/nginx/ssl/teslausb.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    root /var/www/html;
+
+    index index.html;
+
+    server_name _;
+
+    client_max_body_size 0;
+    fastcgi_request_buffering off;
+
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1000;
+    gzip_types text/plain application/octet-stream text/html text/css;
+
+    location / {
+        try_files $uri $uri/ =404;
+        auth_basic off;
+        auth_basic_user_file /etc/nginx/.htpasswd;
+    }
+
+    location /cgi-bin/ {
+         auth_basic off;
+         auth_basic_user_file /etc/nginx/.htpasswd;
+         root /var/www/html;
+         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+         include /etc/nginx/fastcgi_params;
+         fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+         fastcgi_param HTTPS on;
+         fastcgi_max_temp_file_size 0;
+    }
+    location /TeslaCam/ {
+         auth_basic off;
+         auth_basic_user_file /etc/nginx/.htpasswd;
+         root /var/www/html;
+         fancyindex on;
+         fancyindex_css_href /fancyindex.css;
+    }
+}
