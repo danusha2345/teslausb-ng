@@ -90,3 +90,19 @@ function dayNameFromDateString(datestr) {
   var d = new Date(datestr.replaceAll("-", "/"));
   return dayNameFormat.format(d);
 }
+
+// "HH:MM:SS" → seconds-into-day. Used by the video scrubber bubble.
+function stringtoseconds(s) {
+  var secs = (3600 * s.substring(0, 2)) +
+             (60 * s.substring(3, 5)) +
+             (1 * s.substring(6, 8));
+  return secs;
+}
+
+// seconds-into-day → "HH:MM" (seconds intentionally omitted on the bubble).
+function secondstostring(t) {
+  var hours = Math.trunc(t / 3600);
+  var minutes = Math.trunc((t % 3600) / 60);
+  return hours.toString().padStart(2, '0')
+         + ":" + minutes.toString().padStart(2, '0')
+}
