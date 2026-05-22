@@ -19,15 +19,17 @@ Theme: close every loose end the v1.0 plan explicitly deferred. After this relea
 - **Files**: `setup/pi/configure.sh` lines 82–85, `setup/pi/install-rsync.sh` if it exists.
 - **Verification**: archive a 5 GB test corpus over rsync, then again over rsync+CIFS, with the stock binary. Compare `--stats` to a baseline run.
 
-### 1.1.2 ES-module split of `index.html` (L, in progress — 4 slices shipped, more to go)
+### 1.1.2 ES-module split of `index.html` (L, in progress — 6 modules shipped, ≈14% extracted)
 - **Why deferred in v1.0**: `index.html` was 3108 lines; the v1.0 Playwright smoke gives the safety net.
-- **Progress** (3108 → 2801, ≈10% extracted):
+- **Progress** (3108 → 2660, -448, ≈14% extracted):
   - **Slice 1** (v1.1.0): `js/utils.js` + `js/cgi.js` — pure utilities (`localStorageGet/Set`, `log`, `download`, `cachebustingurl`, `isElementVisible`) and CGI helpers (`readyState`, `starttailing`, `readfile`, `callcgi`).
   - **Slice 2** (v1.2.0): `js/recordings.js` — layout / playback / debug helpers (`setLayout`, `cycleLayout`, `skipBack`, `startPlaying`, `skipForward`, `hideRecordingParent`, `showDebugInfo`, `showcontrols`) plus `currentLayout` state.
-  - **Slice 3** (unreleased on `main-dev`): `js/formatters.js` — pure formatter helpers (`byteRate`, `bitRate`, `uptimeString`, `spaceString`, `timeString`, `dateFromSeconds`, `dayNameFromDateString`) plus the four `Intl.DateTimeFormat` constants.
-- **Remaining**: `js/wifi.js` (status WIFI + IP rendering), `js/status.js` (status polling + uptime + drive usage), `js/throughput.js` (Speedometer + speed-test UI), `js/settings.js`, BLE pairing UI, reboot UI.
+  - **Slice 3** (v1.2.1): `js/formatters.js` — pure formatter helpers (`byteRate`, `bitRate`, `uptimeString`, `spaceString`, `timeString`, `dateFromSeconds`, `dayNameFromDateString`, `stringtoseconds`, `secondstostring`) plus the four `Intl.DateTimeFormat` constants.
+  - **Slice 4** (v1.2.1): `js/throughput.js` — network speed-test UI (`Speedometer` class + `showspeed`, `updatespeedspinner`, `startspeedtest`, `stopspeedtest` and state).
+  - **Slice 5** (unreleased on `main-dev`): `js/settings.js` — settings-modal functions (`showsettings`, `closesettings`, `cancelsettings`, `confirmsettings`).
+- **Remaining (increasingly coupled — diminishing returns)**: the video-playback core — `VideoSegment` / `VideoSequence` classes, `currentsequence` / `videoelems` / `canvaselems` state, the Sentry/Recents dropdown builders, the scrubber/slider, the hamburger menu, and the status-poll cluster (`showstatus`, `update_upload_throughput`, `updateuptimeonly`). These share mutable state heavily; extracting them piecemeal is riskier than the clean groups already pulled out. The v1.3.3 mobile-responsive overhaul will naturally touch this core and is the better moment to split it.
 - **Files**: `teslausb-www/html/index.html`, new files under `teslausb-www/html/js/`. Loaded as classic `<script>` (not type=module) so existing HTML `onclick` attributes keep resolving via global scope.
-- **Verification**: `tests/webui/smoke.spec.mjs` already exercises `FileBrowser.htmlEscape` against the harness; extend to import each module directly and assert exported functions exist when more slices land. Full-page load still passes the no-errors check.
+- **Verification**: `tests/webui/smoke.spec.mjs` exercises `FileBrowser.htmlEscape` against the harness; extend to import each module directly and assert exported functions exist when more slices land. Full-page load still passes the no-errors check.
 
 ### 1.1.3 CIFS credentials share (M)
 - **Why deferred in v1.0**: `doc/Credentials.md` documents the approach but only the systemd-creds path is implemented.
