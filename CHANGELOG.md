@@ -6,6 +6,13 @@ versions follow SemVer.
 
 ## Unreleased
 
+(nothing yet)
+
+## v1.2.1 — 2026-05-22
+
+HTTPS support — the headline of this release — gives v1.2.0's Web Push the
+secure context it needs. Plus two more ES-module slices off `index.html`.
+
 ### Added
 
 - **HTTPS for the web UI** (`HTTPS_ENABLED=true`): `setup/pi/configure-https.sh`
@@ -33,6 +40,8 @@ versions follow SemVer.
   Inline `<script>` is now 2700 lines. Cumulative since the fork:
   3108 → 2700 (-408, ≈13% of the original inline block) across
   utils / cgi / formatters / throughput / recordings.
+
+[v1.2.1]: https://github.com/danusha2345/teslausb-ng/releases/tag/v1.2.1
 
 ## v1.2.0 — 2026-05-21
 
