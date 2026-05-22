@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<!--
+  Harness that loads the pure-function ES-module-split modules (utils.js,
+  formatters.js) in isolation so Playwright can unit-test them without the
+  full index.html / nginx / CGI stack. These modules are classic <script>s
+  that define globals; load order matters (formatters has no deps, utils'
+  log() reads window.DEBUG). Opened via file://.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>teslausb-ng modules test harness</title>
+  </head>
+  <body>
+    <script src="../../teslausb-www/html/js/utils.js"></script>
+    <script src="../../teslausb-www/html/js/formatters.js"></script>
+  </body>
+</html>
