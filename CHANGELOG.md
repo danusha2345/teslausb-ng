@@ -6,7 +6,16 @@ versions follow SemVer.
 
 ## Unreleased
 
-(nothing yet)
+### Refactored
+
+- **Fifth slice of the `index.html` ES-module split** (v1.1.2):
+  `js/settings.js` pulls out the settings-modal functions
+  (`showsettings`, `closesettings`, `cancelsettings`,
+  `confirmsettings`). `readconfig` / `initialize` stay inline (they're
+  bootstrap glue coupled to FileBrowser, the tab DOM, and the
+  status-poll functions). Inline `<script>` is now 2674 lines.
+  Cumulative since the fork: 3108 → 2674 (-434, ≈14%) across
+  utils / cgi / formatters / throughput / recordings / settings.
 
 ## v1.2.1 — 2026-05-22
 

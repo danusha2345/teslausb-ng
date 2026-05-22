@@ -22,6 +22,7 @@
 <script src="js/formatters.js"></script>
 <script src="js/throughput.js"></script>
 <script src="js/recordings.js"></script>
+<script src="js/settings.js"></script>
 <script src="js/i18n.js"></script>
 <meta name="msapplication-TileColor" content="#00aba9">
 <meta name="msapplication-config" content="/icons/browserconfig.xml">
@@ -1559,35 +1560,8 @@ function initialize() {
   }
 }
 
-function showsettings() {
-  var altui = document.getElementById('altui');
-  altui.checked = (localStorageGet("usealtui") == "true");
-  var disablepreloadvideoclips = document.getElementById('disablepreloadvideoclips');
-  disablepreloadvideoclips.checked = (localStorageGet("disablepreloadvideoclips") == "true");
-  var overlay = document.getElementById("settingsoverlay");
-  overlay.style.display = "block";
-}
-
-function closesettings() {
-  var overlay = document.getElementById("settingsoverlay");
-  overlay.style.display = "none";
-}
-
-function cancelsettings() {
-  closesettings();
-}
-
-function confirmsettings() {
-  var usealtui = document.getElementById('altui').checked;
-  localStorageSet("usealtui", usealtui);
-  if (usealtui) {
-    document.location.replace('/new/?source=legacy');
-    nonExistentFunction();
-  }
-  var disablepreloadvideoclips = document.getElementById('disablepreloadvideoclips').checked;
-  localStorageSet("disablepreloadvideoclips", disablepreloadvideoclips);
-  closesettings();
-}
+// showsettings / closesettings / cancelsettings / confirmsettings moved to
+// js/settings.js (loaded above this block).
 
 function inIframe () {
   try {
