@@ -13,8 +13,15 @@ versions follow SemVer.
   `bitRate`, `uptimeString`, `spaceString`, `timeString`,
   `dateFromSeconds`, `dayNameFromDateString` — and the four
   `Intl.DateTimeFormat` constants. All pure, no DOM, no XHR.
-  Inline `<script>` shrinks 2868 → 2801 lines. Cumulative since the
-  fork: 3108 → 2801 lines extracted (-307, ≈10% of the inline block).
+- **Fourth slice of the `index.html` ES-module split** (v1.1.2):
+  `js/throughput.js` pulls out the network speed-test UI — the
+  `Speedometer` rolling-average class plus `showspeed`,
+  `updatespeedspinner`, `startspeedtest`, `stopspeedtest` and their
+  state. `setbuttonsdisabled` stays inline (shared with BLE-pairing
+  and reboot flows).
+  Inline `<script>` is now 2700 lines. Cumulative since the fork:
+  3108 → 2700 (-408, ≈13% of the original inline block) across
+  utils / cgi / formatters / throughput / recordings.
 
 ## v1.2.0 — 2026-05-21
 
