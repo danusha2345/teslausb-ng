@@ -6,6 +6,13 @@ versions follow SemVer.
 
 ## Unreleased
 
+(nothing yet)
+
+## v1.2.2 — 2026-05-23
+
+Russian-UI coverage expands, the v1.1.2 module split gets test coverage,
+and one more inline slice lands. No behavior changes for English users.
+
 ### Added
 
 - **Expanded i18n coverage** (v1.3.4 follow-up): the en/ru string tables
@@ -33,6 +40,8 @@ versions follow SemVer.
   `js/formatters.js`. Inline `<script>` is now 2660 lines.
   Cumulative since the fork: 3108 → 2660 (-448, ≈14%) across
   utils / cgi / formatters / throughput / recordings / settings.
+
+[v1.2.2]: https://github.com/danusha2345/teslausb-ng/releases/tag/v1.2.2
 
 ## v1.2.1 — 2026-05-22
 
