@@ -868,8 +868,8 @@ video {
     <div style="width:100%;height:calc(100% - 4px)">
       <pre class="mypre" id="diagnosticspre">...</pre>
       <div style="padding:4px;">
-        <button class="group1" id="diagrefreshbtn" onclick="refreshdiagnostics();">Refresh diagnostics</button>
-        <button class="group1" id="diagdwnbtn" onclick="download('diagnostics.txt', document.getElementById('diagnosticspre').textContent);">Download diagnostics</button>
+        <button class="group1" id="diagrefreshbtn" onclick="refreshdiagnostics();" data-i18n="tools.refresh_diagnostics">Refresh diagnostics</button>
+        <button class="group1" id="diagdwnbtn" onclick="download('diagnostics.txt', document.getElementById('diagnosticspre').textContent);" data-i18n="tools.download_diagnostics">Download diagnostics</button>
       </div>
     </div>
   </div>
@@ -878,7 +878,7 @@ video {
     <div style="width:100%;height:calc(100% - 4px)">
       <pre class="mypre" id="archivelooppre">Loading...</pre>
       <div style="padding:4px;">
-        <button class="group1" id="aldwnbtn" onclick="download('archiveloop.log', document.getElementById('archivelooppre').textContent);">Download archiveloop log</button>
+        <button class="group1" id="aldwnbtn" onclick="download('archiveloop.log', document.getElementById('archivelooppre').textContent);" data-i18n="tools.download_archive_log">Download archiveloop log</button>
       </div>
     </div>
   </div>
@@ -887,7 +887,7 @@ video {
     <div style="width:100%;height:calc(100% - 4px)">
       <pre class="mypre" id="setuplogpre">Loading...</pre>
       <div style="padding:4px;">
-        <button class="group1" id="sudwnbtn" onclick="download('teslausb-headless-setup.log', document.getElementById('setuplogpre').textContent);">Download setup log</button>
+        <button class="group1" id="sudwnbtn" onclick="download('teslausb-headless-setup.log', document.getElementById('setuplogpre').textContent);" data-i18n="tools.download_setup_log">Download setup log</button>
       </div>
     </div>
   </div>
@@ -935,7 +935,7 @@ video {
       </div>
       <button class="group2" id="toggledrives" onclick="toggledrivesfunc();">...</button>
       <p>
-      <button class="group2" onclick="syncfunc();">Trigger archive/sync</button>
+      <button class="group2" onclick="syncfunc();" data-i18n="tools.trigger_sync">Trigger archive/sync</button>
       <span id="synctext" style="padding-left:20px;"></span>
       <p>
       <button class="group2" onclick="startspeedtest(this);" id="speedtestbutton">Run network speed test</button>
@@ -997,12 +997,12 @@ video {
             <path d="M 2 6 L 8 6 L 8 2 L 2 2 z M 10 6 L 16 6 L 16 2 L 10 2 z M 18 6 L 24 6 L 24 2 L 18 2 z M 2 12 L 8 12 L 8 8 L 2 8 z M 10 12 L 16 12 L 16 8 L 10 8 z M 18 12 L 24 12 L 24 8 L 18 8 z"/>
           </svg>
           <div id="layouts" class="subnav-content">
-            <div class="dropdownitem layoutitem" onclick="setLayout(1)">Sides on top, rear on bottom, mirrored</div>
-            <div class="dropdownitem layoutitem" onclick="setLayout(2)">Side and rear on bottom, mirrored</div>
-            <div class="dropdownitem layoutitem" onclick="setLayout(3)">Side and rear on bottom, looking back</div>
+            <div class="dropdownitem layoutitem" onclick="setLayout(1)" data-i18n="layout.1">Sides on top, rear on bottom, mirrored</div>
+            <div class="dropdownitem layoutitem" onclick="setLayout(2)" data-i18n="layout.2">Side and rear on bottom, mirrored</div>
+            <div class="dropdownitem layoutitem" onclick="setLayout(3)" data-i18n="layout.3">Side and rear on bottom, looking back</div>
             <div class="dropdownitem layoutitem" onclick="setLayout(4)">Mobile layout,<br>mirrored</div>
             <div class="dropdownitem layoutitem" onclick="setLayout(5)">Mobile layout,<br>looking back</div>
-            <div class="dropdownitem layoutitem pillar" onclick="setLayout(6)">Pillars on the side</div>
+            <div class="dropdownitem layoutitem pillar" onclick="setLayout(6)" data-i18n="layout.6">Pillars on the side</div>
           </div>
         </div>
       </div>
@@ -1064,19 +1064,19 @@ video {
   <div id="settingsoverlay" class="modaloverlay">
     <div class="modalcontent" style="max-width:500px">
       <div style="margin-bottom:10px">
-        <span>Settings</span>
+        <span data-i18n="settings.title">Settings</span>
         <span class="closebutton">&times;</span>
       </div>
       <div style="width:100%;padding:10px">
         <input type="checkbox" id="altui" name="altui" value="1">
-        <label for="altui">Use alternative web interface</label>
+        <label for="altui" data-i18n="settings.use_alt_ui">Use alternative web interface</label>
       </div>
       <div style="width:100%;padding:10px">
         <input type="checkbox" id="disablepreloadvideoclips" name="disablepreloadvideoclips" value="1">
-        <label for="disablepreloadvideoclips">Disable preloading video clips</label>
+        <label for="disablepreloadvideoclips" data-i18n="settings.disable_preload">Disable preloading video clips</label>
       </div>
       <div style="text-align:right;padding-top:30px;">
-        <button onclick="cancelsettings()">Cancel</button> <button onclick="confirmsettings()">OK</button>
+        <button onclick="cancelsettings()" data-i18n="common.cancel">Cancel</button> <button onclick="confirmsettings()" data-i18n="common.ok">OK</button>
       </div>
     </div>
   </div>

@@ -6,6 +6,21 @@ versions follow SemVer.
 
 ## Unreleased
 
+### Added
+
+- **Expanded i18n coverage** (v1.3.4 follow-up): the en/ru string tables
+  grow from 16 to 30 entries. Newly translatable UI: the Tools-tab
+  buttons (refresh/download diagnostics, download logs, trigger sync),
+  the settings dialog (title, both checkboxes, Cancel/OK), and four
+  layout-dropdown items. `data-i18n` tags in `index.html` go from 15 to
+  29. en/ru key parity verified. JS-managed button labels (speed-test,
+  BLE-pair, reboot — text toggled at runtime) are intentionally left for
+  a later pass to avoid half-translated toggle states.
+- **Playwright unit tests for the extracted modules**: `modules.spec.mjs`
+  (10 tests) locks in the v1.1.2 split — byteRate/bitRate thresholds,
+  uptimeString/spaceString/timeString formatting, the scrubber
+  parser round-trip, and global-export checks for utils.js + formatters.js.
+
 ### Refactored
 
 - **Fifth slice of the `index.html` ES-module split** (v1.1.2):

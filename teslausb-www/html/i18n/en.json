@@ -21,5 +21,23 @@
 
   "header.github_link": "teslausb-ng on GitHub",
 
-  "webpush.toggle": "Enable browser notifications"
+  "webpush.toggle": "Enable browser notifications",
+
+  "tools.refresh_diagnostics": "Refresh diagnostics",
+  "tools.download_diagnostics": "Download diagnostics",
+  "tools.download_archive_log": "Download archiveloop log",
+  "tools.download_setup_log": "Download setup log",
+  "tools.trigger_sync": "Trigger archive/sync",
+
+  "settings.title": "Settings",
+  "settings.use_alt_ui": "Use alternative web interface",
+  "settings.disable_preload": "Disable preloading video clips",
+
+  "common.cancel": "Cancel",
+  "common.ok": "OK",
+
+  "layout.1": "Sides on top, rear on bottom, mirrored",
+  "layout.2": "Side and rear on bottom, mirrored",
+  "layout.3": "Side and rear on bottom, looking back",
+  "layout.6": "Pillars on the side"
 }

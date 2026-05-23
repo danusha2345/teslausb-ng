@@ -21,5 +21,23 @@
 
   "header.github_link": "teslausb-ng на GitHub",
 
-  "webpush.toggle": "Включить уведомления в браузере"
+  "webpush.toggle": "Включить уведомления в браузере",
+
+  "tools.refresh_diagnostics": "Обновить диагностику",
+  "tools.download_diagnostics": "Скачать диагностику",
+  "tools.download_archive_log": "Скачать лог архивирования",
+  "tools.download_setup_log": "Скачать лог установки",
+  "tools.trigger_sync": "Запустить архивирование",
+
+  "settings.title": "Настройки",
+  "settings.use_alt_ui": "Использовать альтернативный веб-интерфейс",
+  "settings.disable_preload": "Отключить предзагрузку видеоклипов",
+
+  "common.cancel": "Отмена",
+  "common.ok": "OK",
+
+  "layout.1": "Боковые сверху, задняя снизу, зеркально",
+  "layout.2": "Боковые и задняя снизу, зеркально",
+  "layout.3": "Боковые и задняя снизу, вид назад",
+  "layout.6": "Стойки по бокам"
 }
