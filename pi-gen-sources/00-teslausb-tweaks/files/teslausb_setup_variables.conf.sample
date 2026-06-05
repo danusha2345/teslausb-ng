@@ -94,6 +94,8 @@ export ARCHIVE_SAVEDCLIPS_LAST_MINUTES=3
 # archive server is still reachable times out, wrongly decides the connection is
 # dead, and kills the transfer mid-cycle ("rsync error ... (code 20)"). Setting
 # a limit a little below your real throughput leaves headroom for that check.
+# This also throttles the music sync (downloading a large library could
+# otherwise saturate the link and make SSH unresponsive — see issue #263).
 # The value is in KiB/s (e.g. 4000 ≈ 4 MB/s) or accepts a suffix (e.g. 20M).
 # See https://github.com/marcone/teslausb/issues/728. Leave commented for no limit.
 # For rclone, add --bwlimit to RCLONE_FLAGS instead.

@@ -54,7 +54,17 @@ function do_music_sync {
 
   connectionmonitor $$ &
 
-  if ! rsync -rum --no-human-readable --exclude=.fseventsd/*** --exclude=*.DS_Store --exclude=.metadata_never_index \
+  # ARCHIVE_BWLIMIT (rsync --bwlimit value) also throttles the music download so
+  # a large library copy doesn't saturate the wifi link to the point that SSH
+  # becomes unresponsive and the connectionmonitor above false-triggers. See
+  # issue #263. Unset (default) means no limit.
+  bwlimit_args=()
+  if [[ -n "${ARCHIVE_BWLIMIT:-}" ]]
+  then
+    bwlimit_args+=("--bwlimit=${ARCHIVE_BWLIMIT}")
+  fi
+
+  if ! rsync -rum "${bwlimit_args[@]}" --no-human-readable --exclude=.fseventsd/*** --exclude=*.DS_Store --exclude=.metadata_never_index \
                 --exclude="System Volume Information/***" \
                 --delete --modify-window=2 --info=stats2 "$SRC/" "$DST" &> "$LOG"
   then
