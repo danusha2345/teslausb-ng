@@ -27,6 +27,26 @@ The easiest way to to configure teslausb for rclone is:
 
 Below are the old instructions in case you want to do things the hard way.
 
+# Keeping rclone current (OneDrive auth, issue #948)
+
+Cloud providers change their auth flows over time, and an out-of-date rclone is
+the usual cause of "unauthenticated" / "bad request" errors — OneDrive in
+particular ([#948](https://github.com/marcone/teslausb/issues/948)). **rclone
+1.69.0 or newer** fixes the known OneDrive breakage. `setup-teslausb` now prints
+a warning if the installed rclone is older.
+
+- Check your version with `rclone version`.
+- Upgrade to the latest at any time (it does not touch your config):
+  ```
+  sudo -i
+  /root/bin/remountfs_rw
+  curl https://rclone.org/install.sh | sudo bash
+  ```
+- For **OneDrive**, when you run `rclone config` you will now see several
+  OneDrive entries; pick **"Microsoft OneDrive"** (the generic option). If the
+  first match returns a "bad request" during the OAuth step, go back and choose
+  the next OneDrive option. After re-configuring, re-run `setup-teslausb`.
+
 # Legacy instructions
 
 > **Note** it is recommended you follow the "Easy rclone setup" instructions listed above instead

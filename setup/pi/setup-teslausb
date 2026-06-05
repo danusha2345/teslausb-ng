@@ -639,6 +639,15 @@ function diagnose {
         echo "ERROR: rclone archiving selected, but rclone config is in /root"
       else
         echo "rclone archiving selected"
+        # OneDrive (and some other backends) started failing auth on older
+        # rclone builds; rclone 1.69.0 carries the fix. Warn loudly if the
+        # installed binary predates it so the user knows to upgrade rather than
+        # chase phantom "unauthenticated" errors. See issue #948.
+        rclonever=$(rclone version 2>/dev/null | head -1 | awk '{print $2}' | tr -d 'v')
+        if [ -n "$rclonever" ] && [ "$(printf '%s\n1.69.0\n' "$rclonever" | sort -V | head -1)" != "1.69.0" ]
+        then
+          echo "WARNING: rclone $rclonever is older than 1.69.0; cloud auth (e.g. OneDrive, issue #948) may fail. Upgrade with: curl https://rclone.org/install.sh | sudo bash"
+        fi
       fi
     else
       echo "archive method: ${ARCHIVE_SYSTEM:-unset}"
