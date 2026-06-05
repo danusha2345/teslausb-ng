@@ -37,10 +37,19 @@ Theme: close every loose end the v1.0 plan explicitly deferred. After this relea
 - **Files**: new `setup/pi/configure-creds.sh`, edits to `setup/pi/configure.sh` to call it when `TESLAUSB_CREDS_SHARE` is set.
 - **Verification**: smoke test on a NAS share; confirm archive cycle waits for mount rather than racing past it.
 
-### 1.1.4 Cherry-pick PR #1035 — cloud-source viewing (L)
-- **Action**: merge upstream PR #1035 (GCS/S3 sources for the local viewer). This was held in v1.0 because the plan called for backend abstraction first. The abstraction is now light enough (each `*_archive` module is self-contained) to merge as-is and add the viewer hook.
-- **Files**: viewer paths under `teslausb-www/`, new `setup/pi/configure-cloud-viewer.sh`.
-- **Verification**: download a known clip from a sandbox GCS bucket, then S3.
+### 1.1.4 ~~Cherry-pick PR #1035 — cloud-source viewing~~ (DONE, Unreleased)
+
+Landed as an opt-in, separately-deployed subsystem rather than something baked
+into the Pi image, which is how upstream PR #1035 is actually designed: a
+`cloudviewer-api` Go service + Docker Compose stack you run on a **local
+computer**, pointed at a GCS/S3 archive bucket. The bulk of the PR is
+self-contained new files (the Go service, Dockerfile, compose, nginx), brought
+in verbatim and verified by the new `cloudviewer-api` CI job. The only change to
+our own UI is the additive **Local / Cloud** switch in `js/cloudsource.js`,
+revealed only when the cloudviewer stack reports a configured cloud source, so
+the Pi web UI is unchanged. There is no `configure-cloud-viewer.sh` on the Pi —
+the runtime is the Docker stack. Cloud streaming awaits real-bucket
+verification; see `doc/CloudViewerGCS.md`.
 
 ### 1.1.6 ~~Reproducible pi-gen image build in CI~~ (DONE in v1.1.0)
 

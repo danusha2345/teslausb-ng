@@ -8,6 +8,24 @@ versions follow SemVer.
 
 ### Added
 
+- **Cloud-bucket viewer** (ROADMAP 1.1.4, cherry-pick of upstream
+  [PR #1035](https://github.com/marcone/teslausb/pull/1035)): an optional
+  `cloudviewer-api` Go service (+ Docker Compose + nginx) you run on a
+  **local computer** to browse and play clips straight from a cloud archive
+  (Google Cloud Storage or S3 / S3-compatible), via signed URLs with HTTP
+  Range streaming. The web UI gains an additive **Local / Cloud** switch
+  (`js/cloudsource.js`) that is revealed only when the page is served by that
+  Docker stack with a configured cloud source — the Pi's own web UI is
+  byte-for-byte unaffected (the switch stays hidden and `videolistUrl()` /
+  `mediaSrc()` resolve to the exact same `cgi-bin/videolist.sh` and cachebusted
+  `TeslaCam/` paths as before). The Go backend is brought in verbatim from the
+  upstream PR (the maintainer can't run the Go toolchain locally) and is gated
+  by a new `cloudviewer-api` CI job (`go vet` / `go build` / `go test`). New
+  i18n keys `viewer.source*` (en/ru). See `doc/CloudViewerGCS.md`. _Cloud
+  streaming itself awaits real-bucket verification; the local-viewer path is
+  covered by the existing Playwright smoke._
+
+
 - **`WIFI_POWER_SAVE_OFF` option** for client-interface link stability: the
   Pi's brcmfmac driver enables wifi power-save by default, which on a headless
   Pi can make the link flap or go sluggish — observed as archiving stalls and

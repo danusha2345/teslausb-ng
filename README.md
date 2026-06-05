@@ -50,7 +50,7 @@ If `teslausb-ng` saves you time or makes your Tesla life better, consider suppor
 | Time sync | deprecated `sntp` ([#733](https://github.com/marcone/teslausb/issues/733)) | `chrony` |
 | Sentry-mode BLE log noise | alarming "Failed to set Sentry Mode" ([#1029](https://github.com/marcone/teslausb/issues/1029)) | informative wording + [doc/Tesla_BLE.md](doc/Tesla_BLE.md) |
 | rsync "broken pipe" recovery | bailout on exit 12/23/30 ([#942](https://github.com/marcone/teslausb/issues/942)) | exit 12/23/24/30 all retried |
-| OneDrive sync via rclone | broken auth ([#948](https://github.com/marcone/teslausb/issues/948)) | bumped rclone install path + docs |
+| OneDrive sync via rclone | broken auth ([#948](https://github.com/marcone/teslausb/issues/948)) | rclone install path + docs + setup warns on rclone < 1.69 |
 | Web UI `eval()` of CGI input | XSS / RCE risk | replaced with explicit parser |
 | Web UI HTML injection | unescaped filenames in `innerHTML` | new `htmlEscape` helper, full sweep |
 | CGI path-traversal | `cd $DOCUMENT_ROOT/${urlargs[0]}` unsafe | shared `_validate_path.sh` + 11 unit tests |
@@ -62,6 +62,7 @@ If `teslausb-ng` saves you time or makes your Tesla life better, consider suppor
 | SavedClips minute filter | not available | cherry-picked PR [#1033](https://github.com/marcone/teslausb/pull/1033) |
 | Upload throughput monitor | not available | cherry-picked PR [#1044](https://github.com/marcone/teslausb/pull/1044) |
 | HTTP compression + preload toggle | not available | cherry-picked PR [#1046](https://github.com/marcone/teslausb/pull/1046) |
+| Cloud-bucket viewer (GCS/S3) | not available | optional Docker `cloudviewer-api` to browse/play clips from a cloud archive — [PR #1035](https://github.com/marcone/teslausb/pull/1035), see [doc/CloudViewerGCS.md](doc/CloudViewerGCS.md) |
 | Credentials at rest | plain text on SD card | optional `systemd-creds` encryption — see [doc/Credentials.md](doc/Credentials.md) |
 | Reproducible image builds | manual | `tools/build-image.sh` + GitHub Actions matrix |
 | CI coverage | ShellCheck on 12 files | ShellCheck (broader), shfmt, prettier, Playwright smoke, path-traversal tests |
