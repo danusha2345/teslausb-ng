@@ -1,0 +1,34 @@
+name: cloudviewer-api
+
+# Build, vet and unit-test the optional cloud-viewer Go service (#1035). The
+# maintainer can't run the Go toolchain locally, so CI is the verification gate
+# for this subsystem.
+
+on:
+  push:
+    paths:
+      - 'cloudviewer-api/**'
+      - '.github/workflows/cloudviewer-api.yml'
+  pull_request:
+    paths:
+      - 'cloudviewer-api/**'
+      - '.github/workflows/cloudviewer-api.yml'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloudviewer-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: cloudviewer-api/go.mod
+          cache-dependency-path: cloudviewer-api/go.sum
+      - name: go vet
+        run: go vet ./...
+      - name: go build
+        run: go build ./...
+      - name: go test
+        run: go test ./...

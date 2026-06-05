@@ -23,3 +23,10 @@ deploy/
 # Python compile cache produced by `python3 -m py_compile`
 __pycache__/
 *.pyc
+
+# Cloud viewer (#1035): local Docker runtime secrets/data. The nginx conf is
+# tracked, so re-include it past the broad *.conf ignore above.
+.env
+local-TeslaCam/
+gcs-service-account.json
+!docker/nginx-cloudviewer.conf
