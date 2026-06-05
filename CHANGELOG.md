@@ -6,6 +6,19 @@ versions follow SemVer.
 
 ## Unreleased
 
+### Added
+
+- **`WIFI_POWER_SAVE_OFF` option** for client-interface link stability: the
+  Pi's brcmfmac driver enables wifi power-save by default, which on a headless
+  Pi can make the link flap or go sluggish — observed as archiving stalls and
+  unresponsive SSH (issues #263, #654, and the "network going up and down" the
+  #263 thread describes). `setup/pi/configure-wifi-powersave.sh` disables it
+  the NetworkManager-native way (a `wifi.powersave = 2` drop-in, persistent
+  across reboots/reconnects), with an `if-up.d` fallback for the legacy
+  wpa_supplicant path. Opt-in; the access-point mode already disabled
+  power-save for its interfaces. _Behavior change — awaiting hardware
+  confirmation._
+
 ### Fixed (issues from upstream)
 
 - **#728** — "rsync error: received SIGINT, SIGTERM, or SIGHUP (code 20)":

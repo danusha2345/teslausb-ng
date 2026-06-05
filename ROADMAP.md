@@ -178,7 +178,7 @@ Theme: surgical rewrites where bash hurts, not "rewrite it all in Rust".
 | #887 Audio skipping Model Y | Wontfix — Tesla firmware | n/a, document in FAQ |
 | #909 Not recording continuously | Mostly fixed by v1.0 systemd hardening; reopen if reports continue | monitor |
 | #825 Sentry & Saved has just 2 files | Needs reproducer | v1.1, ask the reporter for a /mutable snapshot |
-| #654 Stops mounting after weeks | Mostly fixed by v1.0 systemd `Restart=`; reopen if reports continue | monitor |
+| #654 Stops mounting after weeks | Mostly fixed by v1.0 systemd `Restart=`; `WIFI_POWER_SAVE_OFF` (Unreleased) addresses the wifi-flapping contributor; reopen if reports continue | monitor |
 | #460 Network-share creds | Documented in v1.0; CIFS implementation in v1.1.3 | v1.1.3 |
 | #759 Sync progress | Shipped in v1.0 (`SEND_PROGRESS_NOTIFICATIONS=true`) | done |
 | #667 Verbose output | Shipped in v1.0 (`ARCHIVE_VERBOSE=true`) | done |
