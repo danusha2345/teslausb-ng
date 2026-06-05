@@ -152,6 +152,13 @@ export CAM_SIZE=40G
 # that range.
 #export AP_IP='192.168.66.1'
 
+# Uncomment to disable wifi power management on the client interface. The Pi's
+# brcmfmac driver enables power-save by default, which on a headless Pi can make
+# the wifi link flap or go sluggish — seen as archiving stalls and unresponsive
+# SSH (issues #263, #654). This makes the connection more stable at the cost of
+# slightly higher idle power draw. (The access-point mode already disables it.)
+#export WIFI_POWER_SAVE_OFF=true
+
 # Uncomment if you'd like to password protect the teslausb web interface
 # WARNING: Anyone on the $SSID (and $AP_SSID if configured) wifi network can
 # freely interact with the teslausb web interface if it isn't secured!

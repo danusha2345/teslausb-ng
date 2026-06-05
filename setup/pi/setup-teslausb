@@ -1003,6 +1003,11 @@ then
   /tmp/configure-ap.sh
 fi
 
+# Disable wifi power-save on the client interface for link stability. No-op
+# unless WIFI_POWER_SAVE_OFF=true, so it's safe to call unconditionally.
+copy_script setup/pi/configure-wifi-powersave.sh /tmp
+/tmp/configure-wifi-powersave.sh
+
 copy_script setup/pi/configure-automount.sh /tmp
 /tmp/configure-automount.sh
 
