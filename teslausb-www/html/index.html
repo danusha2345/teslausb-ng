@@ -19,6 +19,9 @@
      existing inline code can call the helpers without imports. -->
 <script src="js/utils.js"></script>
 <script src="js/cgi.js"></script>
+<!-- #1035: optional Local/Cloud source switch. Inert unless served by the
+     cloudviewer-api Docker stack with a configured cloud source. -->
+<script src="js/cloudsource.js"></script>
 <script src="js/formatters.js"></script>
 <script src="js/throughput.js"></script>
 <script src="js/recordings.js"></script>
@@ -991,6 +994,15 @@ video {
         <div class="subnav">SentryClips
           <div id="SentryClips" class="subnav-content"></div>
         </div>
+        <!-- #1035: revealed by js/cloudsource.js only when the cloudviewer-api
+             reports a configured cloud source; hidden on the Pi. -->
+        <div id="videosourceswitch" class="subnav" style="display:none;">
+          <span data-i18n="viewer.source">Source</span>
+          <div class="subnav-content">
+            <div id="videosource_local" class="dropdownitem" onclick="setVideoSource('local')" data-i18n="viewer.source_local">Local</div>
+            <div id="videosource_cloud" class="dropdownitem" onclick="setVideoSource('cloud')" data-i18n="viewer.source_cloud">Cloud</div>
+          </div>
+        </div>
 
         <div class="subnav layoutbtn" style="float:right;">
           <svg class="layoutsvg" width="52" height="26" viewBox="0 0 26 13">
@@ -1757,36 +1769,38 @@ class VideoSegment {
   }
 
   select() {
-    var prefix = "TeslaCam/" + this.group + "/" + this.sequence + "/";
+    // #1035: prefix is the source-relative path; mediaSrc() resolves it to the
+    // local TeslaCam/ path or the cloud stream endpoint per the active source.
+    var prefix = this.group + "/" + this.sequence + "/";
     log("===== segment =====");
     freezeVideoElems();
     if (this.leftrepeater != undefined) {
-      videoelems[0].src = cachebustingurl(prefix + this.leftrepeater);
+      videoelems[0].src = mediaSrc(prefix + this.leftrepeater);
     } else {
       videoelems[0].removeAttribute('src');
     }
     if (this.leftpillar != undefined) {
-      videoelems[1].src = cachebustingurl(prefix + this.leftpillar);
+      videoelems[1].src = mediaSrc(prefix + this.leftpillar);
     } else {
       videoelems[1].removeAttribute('src');
     }
     if (this.front != undefined) {
-      videoelems[2].src = cachebustingurl(prefix + this.front);
+      videoelems[2].src = mediaSrc(prefix + this.front);
     } else {
       videoelems[2].removeAttribute('src');
     }
     if (this.rightrepeater != undefined) {
-      videoelems[3].src = cachebustingurl(prefix + this.rightrepeater);
+      videoelems[3].src = mediaSrc(prefix + this.rightrepeater);
     } else {
       videoelems[3].removeAttribute('src');
     }
     if (this.rightpillar != undefined) {
-      videoelems[4].src = cachebustingurl(prefix + this.rightpillar);
+      videoelems[4].src = mediaSrc(prefix + this.rightpillar);
     } else {
       videoelems[4].removeAttribute('src');
     }
     if (this.back != undefined) {
-      videoelems[5].src = cachebustingurl(prefix + this.back);
+      videoelems[5].src = mediaSrc(prefix + this.back);
     } else {
       videoelems[5].removeAttribute('src');
     }
@@ -2027,7 +2041,7 @@ class VideoSequence {
       return;
     }
 
-    var jsonurl = "TeslaCam/" + this.jsonfile[idx];
+    var jsonurl = mediaSrc(this.jsonfile[idx]);
     // clear this so we only do this once
     this.jsonfile[idx] = null;
     log("starting json fetch");
@@ -2450,8 +2464,9 @@ function flipdropdownsfromclick() {
 }
 
 readconfig();
+initCloudSource();
 
-readfile({url:'cgi-bin/videolist.sh', callback:function(value) {
+readfile({url:videolistUrl(), callback:function(value) {
   var newest="0-";
   var newestsequence;
   var lines = value.split('\n');

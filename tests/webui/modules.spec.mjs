@@ -112,3 +112,25 @@ test("cachebustingurl appends a query string", async ({ page }) => {
   });
   expect(out).toBe(true);
 });
+
+test("cloudsource.js exposes its helpers as globals", async ({ page }) => {
+  await page.goto(HARNESS_URL);
+  const types = await page.evaluate(() =>
+    ["videolistUrl", "mediaSrc", "setVideoSource", "initCloudSource"].map((name) => typeof window[name])
+  );
+  expect(types.every((t) => t === "function")).toBe(true);
+});
+
+test("cloudsource.js defaults to the local source (#1035)", async ({ page }) => {
+  // No cloud selection in localStorage -> the viewer must resolve exactly the
+  // same URLs the local-only viewer always used, so the Pi path is unchanged.
+  await page.goto(HARNESS_URL);
+  const out = await page.evaluate(() => {
+    const rel = "SentryClips/2024-01-01_12-34-56/2024-01-01_12-34-56-front.mp4";
+    return {
+      list: videolistUrl(),
+      media: mediaSrc(rel).startsWith("TeslaCam/" + rel),
+    };
+  });
+  expect(out).toEqual({ list: "cgi-bin/videolist.sh", media: true });
+});

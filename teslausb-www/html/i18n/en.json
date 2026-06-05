@@ -36,6 +36,10 @@
   "common.cancel": "Cancel",
   "common.ok": "OK",
 
+  "viewer.source": "Source",
+  "viewer.source_local": "Local",
+  "viewer.source_cloud": "Cloud",
+
   "layout.1": "Sides on top, rear on bottom, mirrored",
   "layout.2": "Side and rear on bottom, mirrored",
   "layout.3": "Side and rear on bottom, looking back",
