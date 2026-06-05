@@ -6,7 +6,27 @@ versions follow SemVer.
 
 ## Unreleased
 
-(nothing yet)
+### Fixed (issues from upstream)
+
+- **#728** — "rsync error: received SIGINT, SIGTERM, or SIGHUP (code 20)":
+  on a fast link a full-speed transfer can saturate the connection badly
+  enough that the `connectionmonitor` watchdog's reachability check times
+  out, wrongly concludes the archive server is gone, and kills the transfer
+  mid-cycle (the car is then allowed to sleep with archiving incomplete).
+  New opt-in `ARCHIVE_BWLIMIT` passes `--bwlimit` to rsync for the cifs,
+  rsync and nfs archive methods, leaving headroom for the watchdog ping —
+  this is the remedy upstream recommended in the issue thread. Unset
+  (default) keeps the previous unthrottled behavior, so nothing changes for
+  users who aren't hitting the false-positive kill. rclone users add
+  `--bwlimit` via `RCLONE_FLAGS` as before. The watchdog timing itself is
+  left untouched (a behavior change there can't be verified without
+  hardware). _Awaiting confirmation from an affected hardware tester._
+- **#948** — "OneDrive sync is broken": the root cause is an out-of-date
+  rclone (the OneDrive auth fix shipped in rclone 1.69.0). `setup-teslausb`
+  now prints a clear WARNING, with the upgrade one-liner, when the installed
+  rclone predates 1.69.0 instead of letting the user chase phantom
+  "unauthenticated" errors. `doc/SetupRClone.md` gains a "Keeping rclone
+  current" section covering the upgrade and the OneDrive config-option gotcha.
 
 ## v1.2.2 — 2026-05-23
 
