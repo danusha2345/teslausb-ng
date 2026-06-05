@@ -88,6 +88,17 @@ export SHARE_PASSWORD='password'
 # Set to 0 to archive all SavedClips footage instead.
 export ARCHIVE_SAVEDCLIPS_LAST_MINUTES=3
 
+# Optional: throttle the upload bandwidth (rsync --bwlimit, applies to the cifs,
+# rsync and nfs archive methods). On fast links a full-speed transfer can
+# saturate the connection so badly that the watchdog that checks whether the
+# archive server is still reachable times out, wrongly decides the connection is
+# dead, and kills the transfer mid-cycle ("rsync error ... (code 20)"). Setting
+# a limit a little below your real throughput leaves headroom for that check.
+# The value is in KiB/s (e.g. 4000 ≈ 4 MB/s) or accepts a suffix (e.g. 20M).
+# See https://github.com/marcone/teslausb/issues/728. Leave commented for no limit.
+# For rclone, add --bwlimit to RCLONE_FLAGS instead.
+#export ARCHIVE_BWLIMIT=4000
+
 # Notes on sd card and image sizes:
 #   * A 128 GB or larger sd card (or USB drive, when using Pi4) is recommended.
 #     The minimum supported size is 64 GB.

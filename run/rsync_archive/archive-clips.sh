@@ -11,6 +11,12 @@ fi
 if [[ "${SEND_PROGRESS_NOTIFICATIONS:-false}" == "true" ]]; then
   rsync_extra+=("--info=progress2")
 fi
+# ARCHIVE_BWLIMIT (rsync --bwlimit value, e.g. 4000 for ~4 MB/s) throttles the
+# transfer so a saturated link doesn't starve a slow connection into the
+# --timeout=60 abort below. See issue #728. Unset (default) means no limit.
+if [[ -n "${ARCHIVE_BWLIMIT:-}" ]]; then
+  rsync_extra+=("--bwlimit=${ARCHIVE_BWLIMIT}")
+fi
 
 progress_interval="${PROGRESS_NOTIFY_INTERVAL_SECONDS:-300}"
 notifier_pid=

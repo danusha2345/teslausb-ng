@@ -36,6 +36,16 @@ mkdir -p "$ARCHIVE_MOUNT/$rsynctmp"
 
 rm -f /tmp/archive-rsync-cmd.log /tmp/archive-error.log
 
+# ARCHIVE_BWLIMIT (rsync --bwlimit value, e.g. 4000 for ~4 MB/s) throttles the
+# transfer so a saturated link can't crowd out the connectionmonitor
+# reachability check above and trigger a false "connection dead" kill that
+# aborts archiving mid-cycle. See issue #728. Unset (default) means no limit.
+bwlimit_args=()
+if [[ -n "${ARCHIVE_BWLIMIT:-}" ]]
+then
+  bwlimit_args+=("--bwlimit=${ARCHIVE_BWLIMIT}")
+fi
+
 while [ -n "${1+x}" ]
 do
   # rsync exit codes treated as transient and retried by archiveloop on next cycle:
@@ -44,7 +54,7 @@ do
   #   24 — partial transfer due to vanished source files (normal on Tesla writes)
   #   30 — timeout in data send/receive (CIFS connection stall, broken pipe)
   # See issue #942 ("Archiving Error - Broken pipe").
-  if ! (rsync -avhRL --remove-source-files --temp-dir="$rsynctmp" --no-perms --omit-dir-times --stats \
+  if ! (rsync -avhRL "${bwlimit_args[@]}" --remove-source-files --temp-dir="$rsynctmp" --no-perms --omit-dir-times --stats \
         --log-file=/tmp/archive-rsync-cmd.log --ignore-missing-args \
         --files-from="$2" "$1/" "$ARCHIVE_MOUNT" &> /tmp/rsynclog || [[ "$?" =~ ^(12|23|24|30)$ ]] )
   then

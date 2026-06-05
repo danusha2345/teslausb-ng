@@ -29,10 +29,20 @@ mkdir -p "$ARCHIVE_MOUNT/$rsynctmp"
 
 rm -f /tmp/archive-rsync-cmd.log /tmp/archive-error.log
 
+# ARCHIVE_BWLIMIT (rsync --bwlimit value, e.g. 4000 for ~4 MB/s) throttles the
+# transfer so a saturated link can't crowd out the connectionmonitor
+# reachability check above and trigger a false "connection dead" kill that
+# aborts archiving mid-cycle. See issue #728. Unset (default) means no limit.
+bwlimit_args=()
+if [[ -n "${ARCHIVE_BWLIMIT:-}" ]]
+then
+  bwlimit_args+=("--bwlimit=${ARCHIVE_BWLIMIT}")
+fi
+
 while [ -n "${1+x}" ]
 do
   # Using --no-o --no-g to prevent permission errors on NFS root squashed shares
-  if ! (rsync -avhRL --no-o --no-g --remove-source-files --temp-dir="$rsynctmp" --no-perms --omit-dir-times --stats \
+  if ! (rsync -avhRL "${bwlimit_args[@]}" --no-o --no-g --remove-source-files --temp-dir="$rsynctmp" --no-perms --omit-dir-times --stats \
         --log-file=/tmp/archive-rsync-cmd.log --ignore-missing-args \
         --files-from="$2" "$1/" "$ARCHIVE_MOUNT" &> /tmp/rsynclog || [[ "$?" = "24" ]] )
   then
