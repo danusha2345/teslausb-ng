@@ -6,6 +6,18 @@ versions follow SemVer.
 
 ## Unreleased
 
+(nothing yet)
+
+## v1.3.0 — 2026-06-05
+
+The cloud-viewer release. Browse and play your Sentry/Saved clips straight
+from a Google Cloud Storage or S3 archive bucket via an optional Docker
+service you run on a local computer — the Pi's own web UI is untouched.
+Shipped alongside a batch of wifi/transfer reliability fixes for the upstream
+issues behind premature archive aborts, unresponsive SSH, and broken OneDrive
+sync. All opt-in; default behavior is unchanged. Hardware/cloud paths await
+community verification (see the README "Testers Wanted" banner).
+
 ### Added
 
 - **Cloud-bucket viewer** (ROADMAP 1.1.4, cherry-pick of upstream
@@ -65,6 +77,8 @@ versions follow SemVer.
   music sync in `copy-music.sh`, leaving headroom for SSH and the reachability
   watchdog. Opt-in; default behavior unchanged. For very large libraries a
   dedicated USB/SSD drive is still the better route, as the issue thread notes.
+
+[v1.3.0]: https://github.com/danusha2345/teslausb-ng/releases/tag/v1.3.0
 
 ## v1.2.2 — 2026-05-23
 
