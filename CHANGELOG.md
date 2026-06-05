@@ -27,6 +27,13 @@ versions follow SemVer.
   rclone predates 1.69.0 instead of letting the user chase phantom
   "unauthenticated" errors. `doc/SetupRClone.md` gains a "Keeping rclone
   current" section covering the upgrade and the OneDrive config-option gotcha.
+- **#263** — "Pi fails to respond to SSH when copying music from CIFS share":
+  same root cause as #728 — a large music-library download saturates the
+  wifi link to the point that SSH hangs (upstream attributed it to "slow
+  wifi being saturated"). The `ARCHIVE_BWLIMIT` knob now also throttles the
+  music sync in `copy-music.sh`, leaving headroom for SSH and the reachability
+  watchdog. Opt-in; default behavior unchanged. For very large libraries a
+  dedicated USB/SSD drive is still the better route, as the issue thread notes.
 
 ## v1.2.2 — 2026-05-23
 

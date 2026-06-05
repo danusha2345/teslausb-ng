@@ -174,6 +174,7 @@ Theme: surgical rewrites where bash hurts, not "rewrite it all in Rust".
 |---|---|---|
 | #948 OneDrive sync | Root cause is rclone < 1.69.0; `setup-teslausb` now warns on old rclone + `doc/SetupRClone.md` upgrade/OneDrive notes (Unreleased) | done, monitor |
 | #728 rsync code 20 (watchdog kill) | Opt-in `ARCHIVE_BWLIMIT` (`--bwlimit`) for cifs/rsync/nfs leaves headroom for the reachability watchdog (Unreleased) | done, awaiting hardware confirmation |
+| #263 SSH unresponsive during music copy | Same saturation root cause as #728; `ARCHIVE_BWLIMIT` now also throttles `copy-music.sh` (Unreleased) | done, awaiting hardware confirmation |
 | #887 Audio skipping Model Y | Wontfix — Tesla firmware | n/a, document in FAQ |
 | #909 Not recording continuously | Mostly fixed by v1.0 systemd hardening; reopen if reports continue | monitor |
 | #825 Sentry & Saved has just 2 files | Needs reproducer | v1.1, ask the reporter for a /mutable snapshot |
